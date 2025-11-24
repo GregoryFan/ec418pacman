@@ -12,6 +12,7 @@ import argparse, torch, torch.optim as optim
 from pathlib import Path
 from pacman_env import PacmanEnv
 from dqn_agent import DQN, ReplayMemory, select_action, optimise, DEVICE
+from frame_mem import FrameStack
 
 # ───────── hyper‑parameters ─────────
 NUM_EPISODES      = 1000
@@ -26,6 +27,7 @@ EPS               = (1.0, 0.05, 8_000)   # ε‑greedy schedule (start, end, dec
 # ───────── single‑layout trainer ─────────
 def train_layout(layout: str, episodes: int) -> Path:
     env = PacmanEnv(layout)
+    env = FrameStack(env, k=4)
     obs_shape = env.observation_space.shape        # (H, W, C)
     n_actions = env.action_space.n
     print("Created environment")
@@ -74,6 +76,5 @@ if __name__ == "__main__":
     episodes = NUM_EPISODES_FAST if args.fast else NUM_EPISODES
 
 
-    for layout in ["spiral_harder"]:
-#    for layout in ["classic", "spiral", "spiral_harder", "empty"]:  
+    for layout in ["classic", "spiral", "spiral_harder", "empty"]:  
         train_layout(layout, episodes)
