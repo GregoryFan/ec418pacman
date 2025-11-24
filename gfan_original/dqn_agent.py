@@ -58,31 +58,28 @@ class DQN(nn.Module):
     
     def __init__(self, obs_shape: Tuple[int, int, int], n_actions: int):
         super().__init__()
-
+        # TODO: Implement network architecture
+        self.obs_shape = obs_shape
+        self.n_actions = n_actions
         H, W, C = obs_shape
-
-        self.convChain = nn.Sequential(
-            nn.Conv2d(C, 32, kernel_size=8, stride=4),
-            nn.ReLU(),
-            nn.Conv2d(32, 64, kernel_size=4, stride=2),
-            nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, stride=1),
-            nn.ReLU(),
-            nn.Flatten()
+        self.conv = nn.Sequential(
+            nn.Conv2d(C, 32, 8, 4), nn.ReLU(),
+            nn.Conv2d(32, 64, 4, 2), nn.ReLU(),
+            nn.Conv2d(64, 64, 3, 1), nn.ReLU(),
         )
-
         with torch.no_grad():
             dummy = torch.zeros(1, C, H, W)
-            conv_out_size = self.convChain(dummy).shape[1]
+            conv_out = self.conv(dummy)
+            conv_flat_dim = conv_out.view(1, -1).shape[1]
 
-        self.linearChain = nn.Sequential(
-            nn.Linear(conv_out_size, 64),
-            nn.ReLU(),
-            nn.Linear(64,128),
-            nn.ReLU(),
-            nn.Linear(128, n_actions)
+        self.fc = nn.Sequential(
+            nn.Linear(conv_flat_dim, 512), nn.ReLU(),
+            nn.Dropout(p=0.1),
         )
-        
+
+        # dueling
+        self.value_head = nn.Linear(512, 1) # V(s)
+        self.adv_head = nn.Linear(512, n_actions) # A(s, a)
     
     def forward(self, x: torch.Tensor):
         """
@@ -98,17 +95,22 @@ class DQN(nn.Module):
         5. Return Q-values for each action
         """
         # TODO: Implement forward pass
+        # x arrives as (B,H,W,C) uint8 from env; convert to float & channels‑first
+        x = x.float().permute(0, 3, 1, 2) / 255.0
 
-        x = x.float() / 255.0
-        x = torch.permute(x, (0, 3, 1, 2))
+        feat = self.conv(x) # (B, 64, H, W)
+        feat = feat.reshape(feat.size(0), -1) # (B, 64*H*W)
+        h = self.fc(feat) # (B, 512)
 
-        x = self.convChain(x)
-        x = self.linearChain(x)
-        return x
+        # Dueling
+        value = self.value_head(h) # (B, 1)
+        adv = self.adv_head(h) # B, n_actions)
 
+        adv_mean = adv.mean(dim=1, keepdim=True) # (B, 1)
+        q = value + (adv - adv_mean) # (B, n_actions)
 
+        return q
 
-        
 
 # ───────────── replay buffer ─────────────
 class ReplayMemory:
@@ -178,20 +180,17 @@ def select_action(state: np.ndarray, net: DQN, step: int,
     """
     
     # TODO: Implement epsilon-greedy action selection
+    eps = eps_end + (eps_start - eps_end) * math.exp(-step/eps_decay)
 
-    #Get epsilon
-    eps = eps_end + (eps_start - eps_end) * math.exp(-step / eps_decay)
-
-    #Pick random with probability eps
     if random.random() < eps:
-        return random.randrange(4)
+        return random.randrange(net.n_actions)
     
-    #Otherwise, pick the highest Q-Value
-    stateTensor = torch.as_tensor(state, dtype=torch.float32).to(DEVICE).unsqueeze(0)
     with torch.no_grad():
-        qVals = net(stateTensor)
+        s = torch.as_tensor(state, device=DEVICE).unsqueeze(0) # (1, H, W, 3)
+        q_vals = net(s)
+        action = int(q_vals.argmax(dim=1).item())
 
-    return int(torch.argmax(qVals, dim = 1).item())
+    return action
 
 def optimise(memory: ReplayMemory, policy: DQN, target: DQN,
              optimiser: optim.Optimizer, batch_size: int, gamma: float):
@@ -256,32 +255,30 @@ def optimise(memory: ReplayMemory, policy: DQN, target: DQN,
     """
     
     # TODO: Implement DQN optimization step
-
-    #Not Enough Memories
     if len(memory) < batch_size:
-        return 
+        return
     
-    #Get Values
     states, actions, rewards, next_states, dones = memory.sample(batch_size)
-    states = torch.tensor(states, dtype=torch.float32).to(DEVICE)
-    actions = torch.tensor(actions, dtype=torch.int64).to(DEVICE).unsqueeze(1)
-    rewards = torch.tensor(rewards, dtype=torch.float32).to(DEVICE).unsqueeze(1)
-    next_states = torch.tensor(next_states, dtype=torch.float32).to(DEVICE)
-    dones = torch.tensor(dones, dtype=torch.int64).to(DEVICE).unsqueeze(1)
 
-    q_vals = policy(states).gather(1, actions)
+    states_t = torch.as_tensor(states, device=DEVICE, dtype=torch.float32)
+    next_states_t = torch.as_tensor(next_states, device=DEVICE, dtype=torch.float32)
+    actions_t = torch.as_tensor(actions, device=DEVICE, dtype=torch.long)
+    rewards_t = torch.as_tensor(rewards, device=DEVICE, dtype=torch.float32)
+    dones_t = torch.as_tensor(dones, device=DEVICE, dtype=torch.float32)
+
+    q_all = policy(states_t) # (B, n_actions)
+    q_sa = q_all.gather(1, actions_t.unsqueeze(1)).squeeze(1) # (B,)
 
     with torch.no_grad():
-        max_next_q = target(next_states).max(1, keepdim=True)[0]
-        target_q = rewards + gamma * max_next_q * (1 - dones)
+        q_next_all = target(next_states_t) # (B, n_actions)
+        q_next_max = q_next_all.max(dim=1)[0] # (B,)
 
-    loss = nn.functional.mse_loss(q_vals, target_q)
+        # target = rewards + gamma * max Q(s', a') * (1-done)
+        targets = rewards_t + (1.0 - dones_t) * gamma * q_next_max # (B,)
+
+    loss = nn.MSELoss()(q_sa, targets)
+
     optimiser.zero_grad()
     loss.backward()
     nn.utils.clip_grad_norm_(policy.parameters(), 1.0)
     optimiser.step()
-
-
-
-    
-    
