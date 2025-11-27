@@ -54,7 +54,7 @@ def evaluate_agent(model_path: str, episodes_per_layout: int = 50):
                 ep_reward += reward
 
             # Win detection: project uses positive reward as success
-            if ep_reward > 0:
+            if done and not env.pellets:
                 wins += 1
 
         env.close()

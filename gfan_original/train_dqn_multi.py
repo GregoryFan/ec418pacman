@@ -45,11 +45,15 @@ def train_multi_layout(episodes: int) -> Path:
     target.load_state_dict(policy.state_dict())
 
     optimiser = optim.Adam(policy.parameters(), lr=LR, weight_decay=1e-5)
-    memory    = ReplayMemory(MEMORY_CAP)
+    memories    = {layout: ReplayMemory(MEMORY_CAP // len(LAYOUTS)) 
+                   for layout in LAYOUTS}
 
     step = 0
     for ep in range(1, episodes + 1):
-        layout = LAYOUTS[(ep - 1) % len(LAYOUTS)] 
+        layout = random.choices(
+            LAYOUTS,
+            weights=[2.0, 2.0, 1.0, 1.0]  # classic y empty with more prob to be elected
+        )[0] 
         env = PacmanEnv(layout)
         state_raw, _ = env.reset() # (H, W, 3)
         state = preprocess(state_raw)
@@ -64,19 +68,20 @@ def train_multi_layout(episodes: int) -> Path:
 
             next_state = preprocess(next_state_raw)
             
-            memory.push(state, action, reward, next_state, float(done))
+            memories[layout].push(state, action, reward, next_state, float(done))
             state = next_state
             ep_reward += reward
 
-            optimise(memory, policy, target, optimiser, BATCH_SIZE, GAMMA)
+            layout_for_update = random.choice(LAYOUTS)
+            optimise(memories[layout_for_update], policy, target, optimiser, BATCH_SIZE, GAMMA)
             if step % TARGET_FREQ == 0:
                 target.load_state_dict(policy.state_dict())
                 print(f"[SYNC] Synchronized target network in step {step}")
-
+        
+        env.close()
         if ep % 100 == 0 or ep == episodes:
             print(f"[{layout}] Episode {ep:4d} | reward = {ep_reward:6.1f}")
-
-    env.close()
+        
     weight_path = Path(f"pacman_dqn_dueling_multi_task.pt")
     torch.save(policy.state_dict(), weight_path)
     print(f"[multi-DQN] training finished → {weight_path.resolve()}")
