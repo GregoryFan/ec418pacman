@@ -11,7 +11,8 @@ import argparse, sys, os
 from pathlib import Path
 import torch
 from pacman_env import PacmanEnv
-from dqn_agent import DQN, DEVICE
+#from dqn_agent import DuelingDQN as DQN, DEVICE
+from dqn_noisy import DQN, DEVICE
 
 # Try to import cv2, but handle gracefully if display is not available
 try:
@@ -49,6 +50,8 @@ def is_display_available():
 def play_visual(layout: str, net: DQN, episodes: int, delay_ms: int, scale: int):
     """Play with OpenCV visualization."""
     env = PacmanEnv(layout)
+   
+
     wins = 0
     cv2.namedWindow("Pac-Man", cv2.WINDOW_AUTOSIZE)  # Also changed the dash
     cv2.waitKey(1)  # Let macOS initialize the window
@@ -88,6 +91,8 @@ def play_visual(layout: str, net: DQN, episodes: int, delay_ms: int, scale: int)
 def play_headless(layout: str, net: DQN, episodes: int):
     """Play without display - text output only."""
     env = PacmanEnv(layout)
+    
+
     wins = 0
     
     print(f"Running DQN agent on {layout} layout (headless mode)")
@@ -175,6 +180,8 @@ if __name__ == "__main__":
     obs_shape = tmp_env.observation_space.shape
     n_actions = tmp_env.action_space.n
     tmp_env.close()
+
+
 
     net = load_net(weight_path, n_actions, obs_shape)
     play(args.layout, net, args.episodes, args.speed, args.scale, args.headless)

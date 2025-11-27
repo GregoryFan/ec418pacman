@@ -20,7 +20,9 @@ import numpy as np
 import torch
 
 # Re‑use env, network and DEVICE from your training module
-from train_dqn import PacmanEnv, DQN, DEVICE
+#from train_dqn import PacmanEnv, DQN, DEVICE
+from pacman_env import PacmanEnv
+from dqn_agent import DuelingDQN as DQN, DEVICE
 
 
 # ──────────────────────────────────────────────────────────────────────────────
