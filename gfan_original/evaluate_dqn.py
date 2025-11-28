@@ -14,14 +14,24 @@ from pathlib import Path
 from pacman_env import PacmanEnv
 from dqn_agent import DQN, DEVICE
 import cv2
+from collections import deque
 
 
 LAYOUTS = ["classic", "spiral", "spiral_harder", "empty"]
 EPISODES_PER_LAYOUT = 50   # total 200 games
-MODEL_PATH = "pacman_dqn_dueling_multi_task.pt"
+MODEL_PATH = "pacman_dqn_dueling_multi_task_resnet.pt"
 
 def preprocess(obs):
     return cv2.resize(obs, (84, 84), interpolation=cv2.INTER_AREA)
+
+def init_buffer():
+    return deque(maxlen=4)
+
+def stack_frames(buffer, new_frame):
+    buffer.append(new_frame)
+    while len(buffer) < 4:
+        buffer.append(new_frame)
+    return np.concatenate(list(buffer), axis=2)
 
 def greedy_action(net, state):
     """Select action = argmax Q(s,a)"""
@@ -41,17 +51,16 @@ def evaluate_agent(model_path: str, episodes_per_layout: int = 50):
         wins = 0
         for ep in range(episodes_per_layout):
             state_raw, _ = env.reset()
-            state = preprocess(state_raw)
+            f = preprocess(state_raw)
+            buf = init_buffer()
+            state = stack_frames(buf, f)
             done = False
-            ep_reward = 0
 
             while not done:
                 action = greedy_action(net, state)
                 next_state_raw, reward, done, _, info = env.step(action)
-                next_state = preprocess(next_state_raw)
-                state = next_state
-
-                ep_reward += reward
+                f2 = preprocess(next_state_raw)
+                state = stack_frames(buf, f2)
 
             # Win detection: project uses positive reward as success
             if done and not env.pellets:
@@ -72,10 +81,8 @@ def evaluate_agent(model_path: str, episodes_per_layout: int = 50):
 if __name__ == "__main__":
     # Load model
     print(f"Loading model: {MODEL_PATH}")
-    tmp_env = PacmanEnv("empty")
-    obs_shape = tmp_env.observation_space.shape
-    n_actions = tmp_env.action_space.n
-    tmp_env.close()
+    obs_shape = (84, 84, 12)
+    n_actions = PacmanEnv("empty").action_space.n
 
     net = DQN(obs_shape, n_actions).to(DEVICE)
     net.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))

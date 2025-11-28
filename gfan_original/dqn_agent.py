@@ -62,15 +62,45 @@ class DQN(nn.Module):
         self.obs_shape = obs_shape
         self.n_actions = n_actions
         H, W, C = obs_shape
-        self.conv = nn.Sequential(
-            nn.Conv2d(C, 32, 8, 4), nn.ReLU(),
-            nn.Conv2d(32, 64, 4, 2), nn.ReLU(),
-            nn.Conv2d(64, 64, 3, 1), nn.ReLU(),
+
+        def residual_block(channels: int):
+            return nn.Sequential(
+                nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
+                nn.ReLU(),
+                nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
+            )
+        
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(C, 32, kernel_size=3, stride=2, padding=1),  # 84→42
+            nn.ReLU(),
         )
+
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),  # 42→21
+            nn.ReLU(),
+        )
+
+        self.res1 = residual_block(64)
+        self.res1_act = nn.ReLU()
+
+        self.conv3 = nn.Sequential(
+            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+        )
+
+        self.res2 = residual_block(64)
+        self.res2_act = nn.ReLU()
+
         with torch.no_grad():
             dummy = torch.zeros(1, C, H, W)
-            conv_out = self.conv(dummy)
-            conv_flat_dim = conv_out.view(1, -1).shape[1]
+            out = self.conv1(dummy)
+            out = self.conv2(out)
+            out_res1 = self.res1(out) + out
+            out = self.res1_act(out_res1)
+            out = self.conv3(out)
+            out_res2 = self.res2(out) + out
+            out = self.res2_act(out_res2)
+            conv_flat_dim = out.view(1, -1).shape[1]
 
         self.fc = nn.Sequential(
             nn.Linear(conv_flat_dim, 512), nn.ReLU(),
@@ -98,9 +128,21 @@ class DQN(nn.Module):
         # x arrives as (B,H,W,C) uint8 from env; convert to float & channels‑first
         x = x.float().permute(0, 3, 1, 2) / 255.0
 
-        feat = self.conv(x) # (B, 64, H, W)
-        feat = feat.reshape(feat.size(0), -1) # (B, 64*H*W)
-        h = self.fc(feat) # (B, 512)
+        x = self.conv1(x)
+        x = self.conv2(x)
+
+        # Residual block 1
+        res = self.res1(x)
+        x = self.res1_act(res + x)
+
+        x = self.conv3(x)
+
+        # Residual block 2
+        res = self.res2(x)
+        x = self.res2_act(res + x)
+
+        x = x.reshape(x.size(0), -1)
+        h = self.fc(x)
 
         # Dueling
         value = self.value_head(h) # (B, 1)

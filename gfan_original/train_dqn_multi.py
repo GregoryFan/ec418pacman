@@ -14,11 +14,22 @@ from pacman_env import PacmanEnv
 from dqn_agent import DQN, ReplayMemory, select_action, optimise, DEVICE
 import random
 import cv2
+from collections import deque
+import numpy as np
 
 def preprocess(obs):
     # Resize to 84x84 (3 channels)
     obs = cv2.resize(obs, (84, 84), interpolation=cv2.INTER_AREA)
     return obs
+
+def init_buffer():
+    return deque(maxlen=4)
+
+def stack_frames(buffer, new_frame):
+    buffer.append(new_frame)
+    while len(buffer) < 4:
+        buffer.append(new_frame)
+    return np.concatenate(list(buffer), axis=2)   # (84,84,12)
 
 # ───────── hyper‑parameters ─────────
 LAYOUTS = ["classic", "empty", "spiral", "spiral_harder"]
@@ -34,10 +45,8 @@ EPS               = (1.0, 0.05, 8_000)   # ε‑greedy schedule (start, end, dec
 
 # ───────── multi‑layout trainer ─────────
 def train_multi_layout(episodes: int) -> Path:
-    env = PacmanEnv()
-    obs_shape = env.observation_space.shape        # (H, W, C)
-    n_actions = env.action_space.n
-    env.close()
+    obs_shape = (84, 84, 12)
+    n_actions = PacmanEnv("empty").action_space.n
 
     # Initialize dueling DQN
     policy  = DQN(obs_shape, n_actions).to(DEVICE)
@@ -56,7 +65,9 @@ def train_multi_layout(episodes: int) -> Path:
         )[0] 
         env = PacmanEnv(layout)
         state_raw, _ = env.reset() # (H, W, 3)
-        state = preprocess(state_raw)
+        f = preprocess(state_raw)
+        buffer = init_buffer()
+        state = stack_frames(buffer, f)
 
         done, ep_reward = False, 0.0
         print(f"[{layout}, episode {ep}].")
@@ -65,8 +76,8 @@ def train_multi_layout(episodes: int) -> Path:
             step += 1
 
             next_state_raw, reward, done, _, _ = env.step(action)
-
-            next_state = preprocess(next_state_raw)
+            f2 = preprocess(next_state_raw)
+            next_state = stack_frames(buffer, f2)
             
             memories[layout].push(state, action, reward, next_state, float(done))
             state = next_state
@@ -82,7 +93,7 @@ def train_multi_layout(episodes: int) -> Path:
         if ep % 100 == 0 or ep == episodes:
             print(f"[{layout}] Episode {ep:4d} | reward = {ep_reward:6.1f}")
         
-    weight_path = Path(f"pacman_dqn_dueling_multi_task.pt")
+    weight_path = Path(f"pacman_dqn_dueling_multi_task_resnet.pt")
     torch.save(policy.state_dict(), weight_path)
     print(f"[multi-DQN] training finished → {weight_path.resolve()}")
     return weight_path
