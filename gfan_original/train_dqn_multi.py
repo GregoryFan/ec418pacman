@@ -25,23 +25,23 @@ def preprocess(obs):
 def init_buffer():
     return deque(maxlen=4)
 
-def stack_frames(buffer, new_frame):
+def stack_frames(buffer: deque, new_frame: np.ndarray) -> np.ndarray:
     buffer.append(new_frame)
     while len(buffer) < 4:
         buffer.append(new_frame)
-    return np.concatenate(list(buffer), axis=2)   # (84,84,12)
+    return np.concatenate(list(buffer), axis=2)  # (84,84,12)
 
 # ───────── hyper‑parameters ─────────
 LAYOUTS = ["classic", "empty", "spiral", "spiral_harder"]
 
 NUM_EPISODES      = 1000
 NUM_EPISODES_FAST = 200
-TARGET_FREQ       = 200
+TARGET_FREQ       = 1000
 BATCH_SIZE        = 128
-MEMORY_CAP        = 20_000
+MEMORY_CAP        = 50_000
 GAMMA             = 0.99
-LR                = 1e-3
-EPS               = (1.0, 0.05, 8_000)   # ε‑greedy schedule (start, end, decay)
+LR                = 1e-4
+EPS               = (1.0, 0.05, 20_000)   # ε‑greedy schedule (start, end, decay)
 
 # ───────── multi‑layout trainer ─────────
 def train_multi_layout(episodes: int) -> Path:
@@ -53,9 +53,8 @@ def train_multi_layout(episodes: int) -> Path:
     target  = DQN(obs_shape, n_actions).to(DEVICE)
     target.load_state_dict(policy.state_dict())
 
-    optimiser = optim.Adam(policy.parameters(), lr=LR, weight_decay=1e-5)
-    memories    = {layout: ReplayMemory(MEMORY_CAP // len(LAYOUTS)) 
-                   for layout in LAYOUTS}
+    optimiser = optim.Adam(policy.parameters(), lr=LR)
+    memory    = ReplayMemory(MEMORY_CAP)
 
     step = 0
     for ep in range(1, episodes + 1):
@@ -79,28 +78,28 @@ def train_multi_layout(episodes: int) -> Path:
             f2 = preprocess(next_state_raw)
             next_state = stack_frames(buffer, f2)
             
-            memories[layout].push(state, action, reward, next_state, float(done))
+            memory.push(state, action, reward, next_state, float(done))
             state = next_state
             ep_reward += reward
 
             layout_for_update = random.choice(LAYOUTS)
-            optimise(memories[layout_for_update], policy, target, optimiser, BATCH_SIZE, GAMMA)
+            optimise(memory, policy, target, optimiser, BATCH_SIZE, GAMMA)
             if step % TARGET_FREQ == 0:
                 target.load_state_dict(policy.state_dict())
                 print(f"[SYNC] Synchronized target network in step {step}")
         
         env.close()
-        if ep % 100 == 0 or ep == episodes:
+        if ep % 50 == 0 or ep == episodes:
             print(f"[{layout}] Episode {ep:4d} | reward = {ep_reward:6.1f}")
         
-    weight_path = Path(f"pacman_dqn_dueling_multi_task_resnet.pt")
+    weight_path = Path(f"pacman_dqn_dueling_multi_task_double.pt")
     torch.save(policy.state_dict(), weight_path)
     print(f"[multi-DQN] training finished → {weight_path.resolve()}")
     return weight_path
 
 # ───────── CLI ─────────
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Train SINGLE DQN over ALL layouts")
+    parser = argparse.ArgumentParser(description="Train SINGLE Double DQN over ALL layouts")
     parser.add_argument(
         "--fast", action="store_true",
         help="quick 200-episode run instead of full 1000"

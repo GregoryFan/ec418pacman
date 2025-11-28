@@ -63,48 +63,20 @@ class DQN(nn.Module):
         self.n_actions = n_actions
         H, W, C = obs_shape
 
-        def residual_block(channels: int):
-            return nn.Sequential(
-                nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
-                nn.ReLU(),
-                nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
-            )
-        
-        self.conv1 = nn.Sequential(
-            nn.Conv2d(C, 32, kernel_size=3, stride=2, padding=1),  # 84→42
-            nn.ReLU(),
+        self.conv = nn.Sequential(
+            nn.Conv2d(C, 32, kernel_size=8, stride=4), nn.ReLU(),   # 84 -> 20
+            nn.Conv2d(32, 64, kernel_size=4, stride=2), nn.ReLU(),  # 20 -> 9
+            nn.Conv2d(64, 64, kernel_size=3, stride=1), nn.ReLU(),  # 9 -> 7
         )
-
-        self.conv2 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),  # 42→21
-            nn.ReLU(),
-        )
-
-        self.res1 = residual_block(64)
-        self.res1_act = nn.ReLU()
-
-        self.conv3 = nn.Sequential(
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-        )
-
-        self.res2 = residual_block(64)
-        self.res2_act = nn.ReLU()
 
         with torch.no_grad():
             dummy = torch.zeros(1, C, H, W)
-            out = self.conv1(dummy)
-            out = self.conv2(out)
-            out_res1 = self.res1(out) + out
-            out = self.res1_act(out_res1)
-            out = self.conv3(out)
-            out_res2 = self.res2(out) + out
-            out = self.res2_act(out_res2)
-            conv_flat_dim = out.view(1, -1).shape[1]
+            conv_out = self.conv(dummy)
+            conv_flat_dim = conv_out.view(1, -1).shape[1]
 
         self.fc = nn.Sequential(
-            nn.Linear(conv_flat_dim, 512), nn.ReLU(),
-            nn.Dropout(p=0.1),
+            nn.Linear(conv_flat_dim, 512),
+            nn.ReLU(),
         )
 
         # dueling
@@ -128,21 +100,9 @@ class DQN(nn.Module):
         # x arrives as (B,H,W,C) uint8 from env; convert to float & channels‑first
         x = x.float().permute(0, 3, 1, 2) / 255.0
 
-        x = self.conv1(x)
-        x = self.conv2(x)
-
-        # Residual block 1
-        res = self.res1(x)
-        x = self.res1_act(res + x)
-
-        x = self.conv3(x)
-
-        # Residual block 2
-        res = self.res2(x)
-        x = self.res2_act(res + x)
-
-        x = x.reshape(x.size(0), -1)
-        h = self.fc(x)
+        feat = self.conv(x)
+        feat = feat.reshape(feat.size(0), -1)
+        h = self.fc(feat)
 
         # Dueling
         value = self.value_head(h) # (B, 1)
@@ -311,12 +271,16 @@ def optimise(memory: ReplayMemory, policy: DQN, target: DQN,
     q_all = policy(states_t) # (B, n_actions)
     q_sa = q_all.gather(1, actions_t.unsqueeze(1)).squeeze(1) # (B,)
 
+    # double DQN
     with torch.no_grad():
-        q_next_all = target(next_states_t) # (B, n_actions)
-        q_next_max = q_next_all.max(dim=1)[0] # (B,)
+        q_next_policy = policy(next_states_t) # (B,n_actions)
+        next_actions  = q_next_policy.argmax(dim=1, keepdim=True)  # (B,1)
+
+        q_next_target  = target(next_states_t) # (B,n_actions)
+        q_next_selected = q_next_target.gather(1, next_actions).squeeze(1)  # (B,)
 
         # target = rewards + gamma * max Q(s', a') * (1-done)
-        targets = rewards_t + (1.0 - dones_t) * gamma * q_next_max # (B,)
+        targets = rewards_t + (1.0 - dones_t) * gamma * q_next_selected
 
     loss = nn.MSELoss()(q_sa, targets)
 
