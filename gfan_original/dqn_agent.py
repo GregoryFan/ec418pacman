@@ -129,6 +129,70 @@ class ReplayMemory:
     def __len__(self):
         return len(self.buf)
 
+# ───────────── reioritized replay memory ───────
+class PrioritizedReplayMemory:
+    def __init__(self, capacity: int, alpha: float = 0.6, beta_start: float = 0.4, beta_frames: int = 100_000):
+        self.capacity = capacity
+        self.alpha = alpha
+        self.beta_start = beta_start
+        self.beta_frames = beta_frames
+
+        self.buf = []
+        self.priorities = np.zeros((capacity,), dtype=np.float32)
+        self.pos = 0
+        self.frame = 1
+        self.eps = 1e-5
+
+    def __len__(self):
+        return len(self.buf)
+    
+    def push(self, *transition):
+        max_prio = self.priorities.max() if self.buf else 1.0
+
+        if len(self.buf) < self.capacity:
+            self.buf.append(tuple(transition))
+        else:
+            self.buf[self.pos] = tuple(transition)
+
+        self.priorities[self.pos] = max_prio
+        self.pos = (self.pos + 1) % self.capacity
+
+    def sample(self, batch_size: int):
+        if len(self.buf) == self.capacity:
+            prios = self.priorities
+        else:
+            prios = self.priorities[:len(self.buf)]
+
+        probs = prios ** self.alpha
+        probs /= probs.sum()
+
+        indices = np.random.choice(len(self.buf), batch_size, p=probs)
+
+        states, actions, rewards, next_states, dones = zip(
+            *[self.buf[idx] for idx in indices]
+        )
+
+        # beta annealing
+        beta = min(1.0, self.beta_start + (1.0 - self.beta_start) * self.frame / self.beta_frames)
+        self.frame += 1
+
+        # importance-sampling weights
+        weights = (len(self.buf) * probs[indices]) ** (-beta)
+        weights /= weights.max()
+
+        states = np.array(states)
+        actions = np.array(actions)
+        rewards = np.array(rewards, dtype=np.float32)
+        next_states = np.array(next_states)
+        dones = np.array(dones, dtype=np.float32)
+        weights = np.array(weights, dtype=np.float32)
+
+        return states, actions, rewards, next_states, dones, indices, weights
+    
+    def update_priorities(self, indices, new_priorities):
+        for idx, prio in zip(indices, new_priorities):
+            self.priorities[idx] = float(abs(prio)+self.eps)
+
 # ───────────── ε‑greedy & optimise ───────
 def select_action(state: np.ndarray, net: DQN, step: int,
                   eps_start: float, eps_end: float, eps_decay: int) -> int:
@@ -194,7 +258,7 @@ def select_action(state: np.ndarray, net: DQN, step: int,
 
     return action
 
-def optimise(memory: ReplayMemory, policy: DQN, target: DQN,
+def optimise(memory: PrioritizedReplayMemory, policy: DQN, target: DQN,
              optimiser: optim.Optimizer, batch_size: int, gamma: float):
     """
     TODO: IMPLEMENT THIS FUNCTION
@@ -260,13 +324,14 @@ def optimise(memory: ReplayMemory, policy: DQN, target: DQN,
     if len(memory) < batch_size:
         return
     
-    states, actions, rewards, next_states, dones = memory.sample(batch_size)
+    states, actions, rewards, next_states, dones, indices, weights = memory.sample(batch_size)
 
     states_t = torch.as_tensor(states, device=DEVICE, dtype=torch.float32)
     next_states_t = torch.as_tensor(next_states, device=DEVICE, dtype=torch.float32)
     actions_t = torch.as_tensor(actions, device=DEVICE, dtype=torch.long)
     rewards_t = torch.as_tensor(rewards, device=DEVICE, dtype=torch.float32)
     dones_t = torch.as_tensor(dones, device=DEVICE, dtype=torch.float32)
+    weights_t = torch.as_tensor(weights, device=DEVICE, dtype=torch.float32)
 
     q_all = policy(states_t) # (B, n_actions)
     q_sa = q_all.gather(1, actions_t.unsqueeze(1)).squeeze(1) # (B,)
@@ -282,9 +347,13 @@ def optimise(memory: ReplayMemory, policy: DQN, target: DQN,
         # target = rewards + gamma * max Q(s', a') * (1-done)
         targets = rewards_t + (1.0 - dones_t) * gamma * q_next_selected
 
-    loss = nn.MSELoss()(q_sa, targets)
+    td_errors = q_sa - targets
+    loss = (weights_t * (td_errors ** 2)).mean()
 
     optimiser.zero_grad()
     loss.backward()
     nn.utils.clip_grad_norm_(policy.parameters(), 1.0)
     optimiser.step()
+
+    new_prios = td_errors.detach().abs().cpu().numpy()
+    memory.update_priorities(indices, new_prios)

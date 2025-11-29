@@ -11,7 +11,7 @@ from __future__ import annotations
 import argparse, torch, torch.optim as optim
 from pathlib import Path
 from pacman_env import PacmanEnv
-from dqn_agent import DQN, ReplayMemory, select_action, optimise, DEVICE
+from dqn_agent import DQN, PrioritizedReplayMemory, select_action, optimise, DEVICE
 import random
 import cv2
 from collections import deque
@@ -43,9 +43,26 @@ GAMMA             = 0.99
 LR                = 1e-4
 EPS               = (1.0, 0.05, 20_000)   # ε‑greedy schedule (start, end, decay)
 
+# ───────── simple curriculum ─────────
+def choose_layout(ep: int) -> str:
+    """
+    1–300:    empty
+    301–600:  classic
+    601–800:  classic + empty + spiral
+    801–1000: all
+    """
+    if ep <= 300:
+        return "empty"
+    elif ep <= 600:
+        return "spiral"
+    elif ep <= 800:
+        return "spiral_harder"
+    else:
+        return "classic"
+
 # ───────── multi‑layout trainer ─────────
 def train_multi_layout(episodes: int) -> Path:
-    obs_shape = (84, 84, 12)
+    obs_shape = (84, 84, 3)
     n_actions = PacmanEnv("empty").action_space.n
 
     # Initialize dueling DQN
@@ -54,19 +71,15 @@ def train_multi_layout(episodes: int) -> Path:
     target.load_state_dict(policy.state_dict())
 
     optimiser = optim.Adam(policy.parameters(), lr=LR)
-    memory    = ReplayMemory(MEMORY_CAP)
+    memory    = PrioritizedReplayMemory(MEMORY_CAP, alpha=0.6, beta_start=0.4, beta_frames=episodes * 200)
 
     step = 0
     for ep in range(1, episodes + 1):
-        layout = random.choices(
-            LAYOUTS,
-            weights=[2.0, 2.0, 1.0, 1.0]  # classic y empty with more prob to be elected
-        )[0] 
+        layout = choose_layout(ep)
         env = PacmanEnv(layout)
+        
         state_raw, _ = env.reset() # (H, W, 3)
-        f = preprocess(state_raw)
-        buffer = init_buffer()
-        state = stack_frames(buffer, f)
+        state = preprocess(state_raw)
 
         done, ep_reward = False, 0.0
         print(f"[{layout}, episode {ep}].")
@@ -75,14 +88,12 @@ def train_multi_layout(episodes: int) -> Path:
             step += 1
 
             next_state_raw, reward, done, _, _ = env.step(action)
-            f2 = preprocess(next_state_raw)
-            next_state = stack_frames(buffer, f2)
+            next_state = preprocess(next_state_raw)
             
             memory.push(state, action, reward, next_state, float(done))
             state = next_state
             ep_reward += reward
 
-            layout_for_update = random.choice(LAYOUTS)
             optimise(memory, policy, target, optimiser, BATCH_SIZE, GAMMA)
             if step % TARGET_FREQ == 0:
                 target.load_state_dict(policy.state_dict())
@@ -92,9 +103,9 @@ def train_multi_layout(episodes: int) -> Path:
         if ep % 50 == 0 or ep == episodes:
             print(f"[{layout}] Episode {ep:4d} | reward = {ep_reward:6.1f}")
         
-    weight_path = Path(f"pacman_dqn_dueling_multi_task_double.pt")
+    weight_path = Path(f"pacman_dqn_dueling_multi_task_per_curriculum.pt")
     torch.save(policy.state_dict(), weight_path)
-    print(f"[multi-DQN] training finished → {weight_path.resolve()}")
+    print(f"[multi-DQN+PER] training finished → {weight_path.resolve()}")
     return weight_path
 
 # ───────── CLI ─────────

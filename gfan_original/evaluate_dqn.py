@@ -19,19 +19,10 @@ from collections import deque
 
 LAYOUTS = ["classic", "spiral", "spiral_harder", "empty"]
 EPISODES_PER_LAYOUT = 50   # total 200 games
-MODEL_PATH = "pacman_dqn_dueling_multi_task_double.pt"
+MODEL_PATH = "pacman_dqn_dueling_multi_task_per_curriculum.pt"
 
 def preprocess(obs):
     return cv2.resize(obs, (84, 84), interpolation=cv2.INTER_AREA)
-
-def init_buffer():
-    return deque(maxlen=4)
-
-def stack_frames(buffer, new_frame):
-    buffer.append(new_frame)
-    while len(buffer) < 4:
-        buffer.append(new_frame)
-    return np.concatenate(list(buffer), axis=2)
 
 def greedy_action(net, state):
     """Select action = argmax Q(s,a)"""
@@ -51,16 +42,13 @@ def evaluate_agent(model_path: str, episodes_per_layout: int = 50):
         wins = 0
         for ep in range(episodes_per_layout):
             state_raw, _ = env.reset()
-            f = preprocess(state_raw)
-            buf = init_buffer()
-            state = stack_frames(buf, f)
+            state = preprocess(state_raw)
             done = False
 
             while not done:
                 action = greedy_action(net, state)
                 next_state_raw, reward, done, _, info = env.step(action)
-                f2 = preprocess(next_state_raw)
-                state = stack_frames(buf, f2)
+                state = preprocess(next_state_raw)
 
             # Win detection: project uses positive reward as success
             if done and not env.pellets:
@@ -81,7 +69,7 @@ def evaluate_agent(model_path: str, episodes_per_layout: int = 50):
 if __name__ == "__main__":
     # Load model
     print(f"Loading model: {MODEL_PATH}")
-    obs_shape = (84, 84, 12)
+    obs_shape = (84, 84, 3)
     n_actions = PacmanEnv("empty").action_space.n
 
     net = DQN(obs_shape, n_actions).to(DEVICE)
