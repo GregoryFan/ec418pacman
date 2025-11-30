@@ -122,9 +122,22 @@ class PacmanEnv(gym.Env):
         return self._render_board(), {}
 
     # ───────────────────────── step ────────────────────────────
+    def nearest_pellet_dist(self, pos, pellets):
+        if not pellets: 
+            return 0
+        px, py = pos
+        return min(abs(px - x) + abs(py - y) for (x, y) in pellets)
+
+    def potential(self, pos):
+        return -self.nearest_pellet_dist(pos, self.pellets)
+
     def step(self, action: int):
         # move Pac‑Man
         px, py = self.pac_pos
+        old_pos = self.pac_pos
+
+        old_phi = self.potential(self.pac_pos)
+
         if   action == 0: px = max(px-1, 0)
         elif action == 1: px = min(px+1, self.h-1)
         elif action == 2: py = max(py-1, 0)
@@ -133,6 +146,23 @@ class PacmanEnv(gym.Env):
         self.pac_pos = (px, py)
 
         reward, terminated = -0.1, False
+
+        #Reward for going near pellets
+        new_phi = self.potential(self.pac_pos)
+
+        shaping = 0.99 * new_phi - old_phi
+        reward += shaping     
+
+        #Penalty for being near ghosts
+        min_gdist = min(abs(px - gx) + abs(py - gy) for (gx, gy) in self.ghost_pos)
+        if min_gdist == 1:      
+            reward -= 1.0
+        elif min_gdist == 2:   
+            reward -= 0.3
+
+        #Penalty for being still (please move)
+        if (px, py) == old_pos:
+            reward -= 1  
         
         # CHECK 1: Collision immediately after Pac-Man moves
         if self.pac_pos in self.ghost_pos:
@@ -141,8 +171,10 @@ class PacmanEnv(gym.Env):
             return self._render_board(), reward, terminated, False, {}
         
         if self.pac_pos in self.pellets:
-            self.pellets.remove(self.pac_pos); reward += 10
-            if not self.pellets: reward += 50; terminated = True
+            self.pellets.remove(self.pac_pos); reward += 5
+            if not self.pellets: reward += 30; terminated = True
+
+
 
         # move each ghost
         if not terminated:

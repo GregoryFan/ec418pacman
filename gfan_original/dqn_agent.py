@@ -16,7 +16,7 @@ class DQN(nn.Module):
         H, W, C = obs_shape
 
         self.convChain = nn.Sequential(
-            nn.Conv2d(C, 32, kernel_size=8, stride=4),
+            nn.Conv2d(C, 32, kernel_size=8, stride=4),  # big stride
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=4, stride=2),
             nn.ReLU(),
@@ -69,8 +69,15 @@ class ReplayMemory:
         self.buf.append(tuple(transition))
 
     def sample(self, batch_size: int):
-        s = random.sample(self.buf, batch_size)
-        return map(np.array, zip(*s))
+        batch = random.sample(self.buf, batch_size)
+        states, actions, rewards, next_states, dones = zip(*batch)
+        return (
+            np.stack(states),
+            np.array(actions),
+            np.array(rewards, dtype=np.float32),
+            np.stack(next_states),
+            np.array(dones, dtype=np.float32),
+        )
 
     def __len__(self):
         return len(self.buf)
@@ -79,14 +86,17 @@ class ReplayMemory:
 def select_action(state: np.ndarray, net: DQN, step: int,
                   eps_start: float, eps_end: float, eps_decay: int) -> int:
     #Get epsilon
-    eps = eps_end + (eps_start - eps_end) * math.exp(-step / eps_decay)
+    if step < eps_decay:
+        eps = eps_start - (step / eps_decay) * (eps_start - eps_end)
+    else:
+        eps = eps_end
 
     #Pick random with probability eps
     if random.random() < eps:
         return random.randrange(4)
     
     #Otherwise, pick the highest Q-Value
-    stateTensor = torch.as_tensor(state, dtype=torch.float32, device=DEVICE).unsqueeze(0) / 255.0
+    stateTensor = torch.as_tensor(state, dtype=torch.float32, device=DEVICE).unsqueeze(0)
     with torch.no_grad():
         qVals = net(stateTensor)
 
@@ -114,7 +124,7 @@ def optimise(memory: ReplayMemory, policy: DQN, target: DQN,
         target_q = rewards + gamma * next_q * (1 - dones)
 
     q_vals = policy(states).gather(1, actions).squeeze(1)
-    loss = nn.functional.mse_loss(q_vals, target_q)
+    loss = nn.functional.smooth_l1_loss(q_vals, target_q)
     optimiser.zero_grad()
     loss.backward()
     nn.utils.clip_grad_norm_(policy.parameters(), 1.0)
