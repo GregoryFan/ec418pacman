@@ -13,6 +13,7 @@ from pathlib import Path
 from pacman_env import PacmanEnv
 from dqn_agent import DQN, ReplayMemory, select_action, optimise, DEVICE
 
+
 # ───────── hyper‑parameters ─────────
 NUM_EPISODES      = 1000
 NUM_EPISODES_FAST = 200
@@ -74,6 +75,6 @@ if __name__ == "__main__":
     episodes = NUM_EPISODES_FAST if args.fast else NUM_EPISODES
 
 
-    for layout in ["spiral_harder"]:
-#    for layout in ["classic", "spiral", "spiral_harder", "empty"]:  
+
+    for layout in ["classic", "spiral", "spiral_harder", "empty"]:  
         train_layout(layout, episodes)
