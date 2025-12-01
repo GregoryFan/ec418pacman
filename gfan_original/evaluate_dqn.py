@@ -19,7 +19,7 @@ from collections import deque
 
 LAYOUTS = ["classic", "spiral", "spiral_harder", "empty"]
 EPISODES_PER_LAYOUT = 50   # total 200 games
-MODEL_PATH = "pacman_dqn_dueling_multi_task_per_curriculum.pt"
+MODEL_PATH = "pacman_dqn_curriculum.pt"
 
 def preprocess(obs):
     return cv2.resize(obs, (84, 84), interpolation=cv2.INTER_AREA)
