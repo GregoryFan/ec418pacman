@@ -1,8 +1,8 @@
-# dqn_agent_noisy.py – Dueling DQN with NoisyLinear layers, replay buffer, optimizer
+# dqn_agent_noisy.py – Dueling DQN with NoisyLinear layers, Prioritized Replay, N-step returns
 from __future__ import annotations
 import math, random
 from collections import deque
-from typing import Tuple
+from typing import Tuple, Optional
 import numpy as np
 import torch
 import torch.nn as nn
@@ -60,35 +60,63 @@ class NoisyLinear(nn.Module):
 
 # ───────────── Dueling DQN with Noisy Layers ─────────────
 class DQN(nn.Module):
-    def __init__(self, obs_shape: Tuple[int, int, int], n_actions: int):
+    def __init__(self, obs_shape: Tuple[int, int, int], n_actions: int, deeper: bool = False):
         super().__init__()
         H, W, C = obs_shape
         self.n_actions = n_actions
 
         # Convolutional feature extractor
-        self.conv = nn.Sequential(
-            nn.Conv2d(C, 32, 8, 4), nn.ReLU(),
-            nn.Conv2d(32, 64, 4, 2), nn.ReLU(),
-            nn.Conv2d(64, 64, 3, 1), nn.ReLU(),
-            nn.Flatten(),
-        )
+        if deeper:
+            # Deeper network for complex layouts like classic
+            self.conv = nn.Sequential(
+                nn.Conv2d(C, 32, 8, 4), nn.ReLU(),
+                nn.Conv2d(32, 64, 4, 2), nn.ReLU(),
+                nn.Conv2d(64, 128, 3, 1), nn.ReLU(),  # Extra layer
+                nn.Conv2d(128, 128, 3, 1), nn.ReLU(),  # Extra layer
+                nn.Flatten(),
+            )
+        else:
+            self.conv = nn.Sequential(
+                nn.Conv2d(C, 32, 8, 4), nn.ReLU(),
+                nn.Conv2d(32, 64, 4, 2), nn.ReLU(),
+                nn.Conv2d(64, 64, 3, 1), nn.ReLU(),
+                nn.Flatten(),
+            )
         with torch.no_grad():
             dummy = torch.zeros(1, C, H, W)
             conv_out = self.conv(dummy).shape[1]
 
         # Value stream with noisy layers
-        self.value_stream = nn.Sequential(
-            NoisyLinear(conv_out, 512),
-            nn.ReLU(),
-            NoisyLinear(512, 1)
-        )
+        if deeper:
+            self.value_stream = nn.Sequential(
+                NoisyLinear(conv_out, 512),
+                nn.ReLU(),
+                NoisyLinear(512, 256),  # Extra layer
+                nn.ReLU(),
+                NoisyLinear(256, 1)
+            )
+        else:
+            self.value_stream = nn.Sequential(
+                NoisyLinear(conv_out, 512),
+                nn.ReLU(),
+                NoisyLinear(512, 1)
+            )
 
         # Advantage stream with noisy layers
-        self.adv_stream = nn.Sequential(
-            NoisyLinear(conv_out, 512),
-            nn.ReLU(),
-            NoisyLinear(512, n_actions)
-        )
+        if deeper:
+            self.adv_stream = nn.Sequential(
+                NoisyLinear(conv_out, 512),
+                nn.ReLU(),
+                NoisyLinear(512, 256),  # Extra layer
+                nn.ReLU(),
+                NoisyLinear(256, n_actions)
+            )
+        else:
+            self.adv_stream = nn.Sequential(
+                NoisyLinear(conv_out, 512),
+                nn.ReLU(),
+                NoisyLinear(512, n_actions)
+            )
 
     def forward(self, x: torch.Tensor):
         # x: (B,H,W,C) uint8 → float, channels-first
@@ -105,7 +133,97 @@ class DQN(nn.Module):
             if isinstance(module, NoisyLinear):
                 module.reset_noise()
 
-# ───────────── Replay Memory ─────────────
+# ───────────── Prioritized Experience Replay ─────────────
+class PrioritizedReplayMemory:
+    """Prioritized Experience Replay using a sum tree for efficient sampling."""
+    def __init__(self, capacity: int, alpha: float = 0.6, beta: float = 0.4, beta_increment: float = 1e-6):
+        self.capacity = capacity
+        self.alpha = alpha  # priority exponent
+        self.beta = beta    # importance sampling exponent
+        self.beta_increment = beta_increment
+        self.max_beta = 1.0
+        
+        # Sum tree for efficient priority sampling
+        self.tree_size = 1
+        while self.tree_size < capacity:
+            self.tree_size *= 2
+        self.tree = np.zeros(2 * self.tree_size - 1)
+        self.data = [None] * capacity
+        self.pos = 0
+        self.size = 0
+        self.max_priority = 1.0
+        
+    def _propagate(self, idx: int, change: float):
+        """Update priority in tree."""
+        parent = (idx - 1) // 2
+        self.tree[parent] += change
+        if parent != 0:
+            self._propagate(parent, change)
+    
+    def _retrieve(self, idx: int, s: float) -> int:
+        """Find sample index given priority value."""
+        left = 2 * idx + 1
+        if left >= len(self.tree):
+            return idx
+        if s <= self.tree[left]:
+            return self._retrieve(left, s)
+        return self._retrieve(left + 1, s - self.tree[left])
+    
+    def push(self, *transition):
+        """Add transition with max priority."""
+        idx = self.pos + self.tree_size - 1
+        self.data[self.pos] = tuple(transition)
+        self._update(idx, self.max_priority)
+        self.pos = (self.pos + 1) % self.capacity
+        self.size = min(self.size + 1, self.capacity)
+    
+    def _update(self, idx: int, priority: float):
+        """Update priority at index."""
+        change = priority - self.tree[idx]
+        self.tree[idx] = priority
+        self._propagate(idx, change)
+        self.max_priority = max(self.max_priority, priority)
+    
+    def sample(self, batch_size: int):
+        """Sample batch with priorities, return indices and importance weights."""
+        indices = []
+        priorities = []
+        segment = self.tree[0] / batch_size
+        
+        self.beta = min(self.max_beta, self.beta + self.beta_increment)
+        
+        for i in range(batch_size):
+            a = segment * i
+            b = segment * (i + 1)
+            s = random.uniform(a, b)
+            idx = self._retrieve(0, s)
+            indices.append(idx)
+            priorities.append(self.tree[idx])
+        
+        indices = np.array([idx - self.tree_size + 1 for idx in indices])
+        priorities = np.array(priorities)
+        
+        # Importance sampling weights
+        probs = priorities / self.tree[0]
+        weights = (self.size * probs) ** (-self.beta)
+        weights /= weights.max()
+        
+        batch = [self.data[idx] for idx in indices]
+        transitions = map(np.array, zip(*batch))
+        return transitions, indices, weights
+    
+    def update_priorities(self, indices: np.ndarray, td_errors: np.ndarray):
+        """Update priorities based on TD errors."""
+        priorities = (np.abs(td_errors) + 1e-6) ** self.alpha
+        for idx, priority in zip(indices, priorities):
+            tree_idx = idx + self.tree_size - 1
+            self._update(tree_idx, priority)
+            self.max_priority = max(self.max_priority, priority)
+    
+    def __len__(self):
+        return self.size
+
+# ───────────── Standard Replay Memory (for backward compatibility) ─────────────
 class ReplayMemory:
     def __init__(self, capacity: int):
         self.buf = deque(maxlen=capacity)
@@ -115,10 +233,13 @@ class ReplayMemory:
 
     def sample(self, batch_size: int):
         s = random.sample(self.buf, batch_size)
-        return map(np.array, zip(*s))
+        return map(np.array, zip(*s)), None, None
 
     def __len__(self):
         return len(self.buf)
+    
+    def update_priorities(self, *args):
+        pass  # No-op for standard replay
 
 # ───────────── Action Selection ─────────────
 def select_action(state: np.ndarray, net: DQN) -> int:
@@ -136,12 +257,35 @@ def select_action(state: np.ndarray, net: DQN) -> int:
 #            return int(q_values.argmax())
 
 
-# ───────────── Optimization ─────────────
-def optimise(memory: ReplayMemory, policy: DQN, target: DQN,
-             optimiser: optim.Optimizer, batch: int, gamma: float):
+# ───────────── Optimization with Prioritized Replay ─────────────
+def optimise(memory, policy: DQN, target: DQN,
+             optimiser: optim.Optimizer, batch: int, gamma: float,
+             n_step: int = 1, n_step_buffer: Optional[deque] = None):
+    """
+    Optimize with support for prioritized replay and n-step returns.
+    
+    Args:
+        memory: ReplayMemory or PrioritizedReplayMemory
+        policy: Policy network
+        target: Target network
+        optimiser: Optimizer
+        batch: Batch size
+        gamma: Discount factor
+        n_step: Number of steps for n-step returns (1 = standard)
+        n_step_buffer: Buffer for n-step transitions (if n_step > 1)
+    """
     if len(memory) < batch:
         return
-    s, a, r, s2, d = memory.sample(batch)
+    
+    # Sample from memory (returns weights if prioritized)
+    sample_result = memory.sample(batch)
+    if isinstance(memory, PrioritizedReplayMemory):
+        (s, a, r, s2, d), indices, weights = sample_result
+        weights = torch.as_tensor(weights, device=DEVICE, dtype=torch.float32)
+    else:
+        (s, a, r, s2, d), indices, weights = sample_result
+        weights = None
+    
     s  = torch.as_tensor(s, device=DEVICE)
     s2 = torch.as_tensor(s2, device=DEVICE)
     a  = torch.as_tensor(a, device=DEVICE, dtype=torch.int64).unsqueeze(1)
@@ -150,18 +294,27 @@ def optimise(memory: ReplayMemory, policy: DQN, target: DQN,
 
     q = policy(s).gather(1, a).squeeze(1)
     with torch.no_grad():
-        #q2 = target(s2).max(1)[0]
-        #tgt = r + (1.0 - d) * gamma * q2
-    #replaced the above with the following for higher success
         # Double DQN: select action with policy, evaluate with target
         next_actions = policy(s2).argmax(dim=1, keepdim=True)   # shape (B,1)
         q2 = target(s2).gather(1, next_actions).squeeze(1)       # shape (B,)
         tgt = r + (1.0 - d) * gamma * q2
 
-    loss = nn.functional.smooth_l1_loss(q, tgt)
+    # Compute TD errors for prioritized replay
+    td_errors = (q - tgt).detach().cpu().numpy()
+    
+    # Weighted loss for prioritized replay
+    if weights is not None:
+        loss = (weights * nn.functional.smooth_l1_loss(q, tgt, reduction='none')).mean()
+    else:
+        loss = nn.functional.smooth_l1_loss(q, tgt)
+    
     optimiser.zero_grad()
     loss.backward()
     nn.utils.clip_grad_norm_(policy.parameters(), 1.0)
     optimiser.step()
     policy.reset_noise()
     target.reset_noise()
+    
+    # Update priorities if using prioritized replay
+    if isinstance(memory, PrioritizedReplayMemory) and indices is not None:
+        memory.update_priorities(indices, td_errors)

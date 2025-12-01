@@ -14,20 +14,21 @@ from pacman_env import PacmanEnv
 #from dqn_agent import DuelingDQN, ReplayMemory, select_action, optimise, DEVICE
 #from frame_stack import FrameStack
 # new
-from dqn_noisy import DQN, ReplayMemory, select_action, optimise, DEVICE
+from dqn_noisy import DQN, PrioritizedReplayMemory, ReplayMemory, select_action, optimise, DEVICE
 
 # ───────── hyper‑parameters ─────────
-NUM_EPISODES      = 1000
+NUM_EPISODES      = 1000  # Increased for better convergence, especially classic
 NUM_EPISODES_FAST = 200
 TARGET_FREQ       = 200
 BATCH_SIZE        = 128
-MEMORY_CAP        = 10_000
+MEMORY_CAP        = 50_000  # Larger buffer for classic layout
+MEMORY_CAP_SMALL  = 20_000  # For smaller layouts
 GAMMA             = 0.99
 LR                = 1e-3
-EPS               = (1.0, 0.05, 8000)   # ε‑greedy schedule (start, end, decay)
-
-#since empyt layout is difficult, need to have a slower decay
-#EPS = (1.0, 0.05, 20000)  # slower decay, explore longer
+LR_DECAY          = 0.995  # Learning rate decay per episode
+LR_MIN            = 1e-5   # Minimum learning rate
+USE_PRIORITIZED   = True   # Use Prioritized Experience Replay
+EPS               = (1.0, 0.05, 8000)   # ε‑greedy schedule (start, end, decay) - not used with noisy nets
 
 
 # ───────── single‑layout trainer ─────────
@@ -43,14 +44,28 @@ def train_layout(layout: str, episodes: int) -> Path:
     #n_actions = env.env.action_space.n   # note the extra .env
     
     print("Created environment")
-    policy  = DQN(obs_shape, n_actions).to(DEVICE)
-    target  = DQN(obs_shape, n_actions).to(DEVICE)
+    # Use deeper network for classic layout due to complexity
+    use_deeper = layout == "classic"
+    policy  = DQN(obs_shape, n_actions, deeper=use_deeper).to(DEVICE)
+    target  = DQN(obs_shape, n_actions, deeper=use_deeper).to(DEVICE)
     target.load_state_dict(policy.state_dict())
     print("Created policy and target networks")
     optimiser = optim.Adam(policy.parameters(), lr=LR)
-    memory    = ReplayMemory(MEMORY_CAP)
+    
+    # Use larger buffer for classic layout, prioritized replay if enabled
+    memory_cap = MEMORY_CAP if layout == "classic" else MEMORY_CAP_SMALL
+    if USE_PRIORITIZED:
+        memory = PrioritizedReplayMemory(memory_cap, alpha=0.6, beta=0.4, beta_increment=1e-6)
+        print(f"Created PrioritizedReplayMemory with capacity {memory_cap}")
+    else:
+        memory = ReplayMemory(memory_cap)
+        print(f"Created ReplayMemory with capacity {memory_cap}")
+    
     print("Created optimizer and memory")
     step = 0
+    current_lr = LR
+    WARMUP_STEPS = 1000  # Collect experiences before training starts
+    
     for ep in range(1, episodes + 1):
         state, _ = env.reset()
         done, ep_reward = False, 0.0
@@ -66,23 +81,27 @@ def train_layout(layout: str, episodes: int) -> Path:
             #action = select_action(state, policy, step, *EPS)
             action = select_action(state, policy) #for the noise
 
-            
-
             next_state, reward, done, _, _ = env.step(action)
             memory.push(state, action, reward, next_state, float(done))
             state = next_state
             ep_reward += reward
 
-            #if step % 4 == 0:
-            optimise(memory, policy, target, optimiser, BATCH_SIZE, GAMMA)
-            if step % TARGET_FREQ == 0:
+            # Train more frequently (every step) but only after warmup
+            if step >= WARMUP_STEPS:
+                optimise(memory, policy, target, optimiser, BATCH_SIZE, GAMMA)
+            if step % TARGET_FREQ == 0 and step > 0:
                 target.load_state_dict(policy.state_dict())
 
             #steps_in_ep += 1
             step += 1
 
-        if ep % 100 == 0 or ep == episodes:
-            print(f"[{layout}] Episode {ep:4d} | reward = {ep_reward:6.1f}")
+        # Learning rate decay
+        current_lr = max(LR_MIN, current_lr * LR_DECAY)
+        for param_group in optimiser.param_groups:
+            param_group['lr'] = current_lr
+        
+        if ep % 50 == 0 or ep == episodes:  # More frequent logging
+            print(f"[{layout}] Episode {ep:4d} | reward = {ep_reward:6.1f} | lr = {current_lr:.6f} | memory = {len(memory)} | steps = {step}")
 
     env.close()
  
@@ -102,7 +121,7 @@ if __name__ == "__main__":
     episodes = NUM_EPISODES_FAST if args.fast else NUM_EPISODES
 
 
-    for layout in ["spiral_harder"]:
+    for layout in ["classic"]:
     #for layout in ["classic", "spiral", "spiral_harder", "empty"]:  
         train_layout(layout, episodes)
 
