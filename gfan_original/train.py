@@ -16,7 +16,7 @@ from frame_mem import FrameStack
 import random
 
 # ───────── hyper‑parameters ─────────
-NUM_EPISODES      = 40000
+NUM_EPISODES      = 30000
 NUM_EPISODES_FAST = 200
 TARGET_FREQ       = 5000
 BATCH_SIZE        = 128

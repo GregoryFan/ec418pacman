@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import gymnasium as gym
 from gymnasium import spaces
+from collections import deque
 
 # ───────── rendering constants ─────────
 PIXELS_PER_CELL = 12          # tile size
@@ -84,8 +85,12 @@ class PacmanEnv(gym.Env):
     def _legal_neighbours(self, x: int, y: int):
         out = []
         for dx, dy in DIRS:
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < self.h and 0 <= ny < self.w and self.floor[nx, ny] == 0:
+            # Compute wrapped coordinates
+            nx = (x + dx) % self.h   
+            ny = (y + dy) % self.w 
+
+            # Only allow non-wall tiles
+            if self.floor[nx, ny] == 0:
                 out.append((nx, ny))
         return out
 
@@ -127,9 +132,43 @@ class PacmanEnv(gym.Env):
             return 0
         px, py = pos
         return min(abs(px - x) + abs(py - y) for (x, y) in pellets)
+    
+    def bfs_nearest_pellet(self, start):
+        if not self.pellets:
+            return 0
+
+        sx, sy = start
+        q = deque([(sx, sy, 0)])
+        visited = set([(sx, sy)])
+
+        while q:
+            x, y, d = q.popleft()
+
+            #check if pellet
+            if (x, y) in self.pellets:
+                return d
+
+            #check neighbors
+            for nx, ny in [
+            ((x - 1) % self.h, y),       
+            ((x + 1) % self.h, y),      
+            (x, (y - 1) % self.w),      
+            (x, (y + 1) % self.w),     
+            ]:
+                if 0 <= nx < self.h and 0 <= ny < self.w:
+                    #walls
+                    if self.floor[nx, ny]:  
+                        continue  
+                    #not wall
+                    if (nx, ny) not in visited:
+                        visited.add((nx, ny))
+                        q.append((nx, ny, d+1))
+
+        #no pellets reachable, should not be possible
+        return 9999
 
     def potential(self, pos):
-        return -self.nearest_pellet_dist(pos, self.pellets)
+        return -self.bfs_nearest_pellet(pos)
 
     def step(self, action: int):
         # move Pac‑Man
@@ -138,10 +177,10 @@ class PacmanEnv(gym.Env):
 
         old_phi = self.potential(self.pac_pos)
 
-        if   action == 0: px = max(px-1, 0)
-        elif action == 1: px = min(px+1, self.h-1)
-        elif action == 2: py = max(py-1, 0)
-        elif action == 3: py = min(py+1, self.w-1)
+        if   action == 0: px = px-1 if px-1 >= 0 else self.h-1
+        elif action == 1: px = px+1 if px+1 < self.h else 0
+        elif action == 2: py = py-1 if py-1 >= 0 else self.w-1
+        elif action == 3: py = py+1 if py+1 < self.w else 0
         if self.floor[px, py]: px, py = self.pac_pos
         self.pac_pos = (px, py)
 
@@ -156,7 +195,7 @@ class PacmanEnv(gym.Env):
         #Penalty for being near ghosts
         min_gdist = min(abs(px - gx) + abs(py - gy) for (gx, gy) in self.ghost_pos)
         if min_gdist == 1:      
-            reward -= 1.0
+            reward -= 1
         elif min_gdist == 2:   
             reward -= 0.3
 
@@ -166,7 +205,7 @@ class PacmanEnv(gym.Env):
         
         # CHECK 1: Collision immediately after Pac-Man moves
         if self.pac_pos in self.ghost_pos:
-            reward -= 50
+            reward -= 30
             terminated = True
             return self._render_board(), reward, terminated, False, {}
         
