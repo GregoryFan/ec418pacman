@@ -8,7 +8,7 @@ Saved weight files:
 """
 
 from __future__ import annotations
-import argparse, torch, torch.optim as optim
+import argparse, random, torch, torch.optim as optim
 from pathlib import Path
 from pacman_env import PacmanEnv
 #from dqn_agent import DuelingDQN, ReplayMemory, select_action, optimise, DEVICE
@@ -29,6 +29,9 @@ LR_DECAY          = 0.995  # Learning rate decay per episode
 LR_MIN            = 1e-5   # Minimum learning rate
 USE_PRIORITIZED   = True   # Use Prioritized Experience Replay
 EPS               = (1.0, 0.05, 8000)   # ε‑greedy schedule (start, end, decay) - not used with noisy nets
+EPSILON_START     = 0.1    # Small epsilon for additional exploration (helps break stuck states)
+EPSILON_END       = 0.01   # Minimum epsilon
+EPSILON_DECAY     = 0.9995 # Decay rate per step
 
 
 # ───────── single‑layout trainer ─────────
@@ -64,7 +67,10 @@ def train_layout(layout: str, episodes: int) -> Path:
     print("Created optimizer and memory")
     step = 0
     current_lr = LR
+    current_epsilon = EPSILON_START
     WARMUP_STEPS = 1000  # Collect experiences before training starts
+    last_action = None
+    action_repeat_count = 0
     
     for ep in range(1, episodes + 1):
         state, _ = env.reset()
@@ -72,14 +78,30 @@ def train_layout(layout: str, episodes: int) -> Path:
         print(f"[{layout}, episode {ep}].")
         max_steps = 4000
         steps_in_ep = 0
+        last_action = None
+        action_repeat_count = 0
+        
         while not done: #and steps_in_ep < max_steps:
             # Reset noise for exploration
             ###IMPORTANT TO KEEP IT INCREASES SCORE FOR SPIRAL
             policy.reset_noise()
             target.reset_noise()
 
-            #action = select_action(state, policy, step, *EPS)
-            action = select_action(state, policy) #for the noise
+            # Select action with epsilon-greedy to break out of stuck states
+            action = select_action(state, policy, training=True, epsilon=current_epsilon)
+            
+            # If stuck repeating same action, force exploration
+            if action == last_action:
+                action_repeat_count += 1
+                if action_repeat_count > 10:  # If stuck for 10 steps, force random
+                    action = random.randrange(n_actions)
+                    action_repeat_count = 0
+            else:
+                action_repeat_count = 0
+            last_action = action
+            
+            # Decay epsilon
+            current_epsilon = max(EPSILON_END, current_epsilon * EPSILON_DECAY)
 
             next_state, reward, done, _, _ = env.step(action)
             memory.push(state, action, reward, next_state, float(done))

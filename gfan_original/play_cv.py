@@ -7,12 +7,13 @@ Usage example:
 """
 
 from __future__ import annotations
-import argparse, sys, os
+import argparse, sys, os, random
 from pathlib import Path
 import torch
+import numpy as np
 from pacman_env import PacmanEnv
 #from dqn_agent import DuelingDQN as DQN, DEVICE
-from dqn_noisy import DQN, DEVICE
+from dqn_noisy import DQN, select_action, DEVICE
 
 # Try to import cv2, but handle gracefully if display is not available
 try:
@@ -23,11 +24,64 @@ except ImportError:
     print("OpenCV not available - running in headless mode")
 
 # ───────────────────────── helper ─────────────────────────
+#def load_net(weight_file: Path, n_actions: int, obs_shape) -> DQN:
+#   net = DQN(obs_shape, n_actions).to(DEVICE)
+#    net.load_state_dict(torch.load(weight_file, map_location=DEVICE))
+#    net.eval()
+#  return net
+
 def load_net(weight_file: Path, n_actions: int, obs_shape) -> DQN:
-    net = DQN(obs_shape, n_actions).to(DEVICE)
-    net.load_state_dict(torch.load(weight_file, map_location=DEVICE))
+    """
+    Robust loader that inspects the checkpoint to decide whether to build the
+    deeper DQN variant (the one used to create the saved weights).
+    """
+    # 1) Read the checkpoint dict (state_dict) first
+    ckpt = torch.load(weight_file, map_location=DEVICE)
+    # ckpt might be either a plain state_dict or a dict with extra metadata
+    if isinstance(ckpt, dict) and "state_dict" in ckpt:
+        state_dict = ckpt["state_dict"]
+    else:
+        state_dict = ckpt
+
+    # 2) Inspect keys to guess whether the checkpoint used the deeper model
+    # deeper model introduces extra conv layer -> keys like 'conv.6.weight' appear,
+    # and NoisyLinear parameter names (weight_mu, weight_sigma) are present.
+    deeper_flag = False
+    if any(k.startswith("conv.6") or ".conv.6" in k for k in state_dict.keys()):
+        deeper_flag = True
+    else:
+        # also check for value/adv extra-layer shapes in parameter names
+        if any("value_stream.4.weight_mu" in k or "adv_stream.4.weight_mu" in k for k in state_dict.keys()):
+            deeper_flag = True
+
+    if deeper_flag:
+        print("Checkpoint appears to be from the deeper DQN architecture -> building DQN(..., deeper=True)")
+    else:
+        print("Checkpoint appears to be from the shallow DQN architecture -> building DQN(..., deeper=False)")
+
+    # 3) Instantiate model accordingly
+    net = DQN(obs_shape, n_actions, deeper=deeper_flag).to(DEVICE)
+
+    # 4) Try strict load first; if it fails, try strict=False and show diagnostics
+    try:
+        net.load_state_dict(state_dict)
+        print("Loaded state_dict with strict=True")
+    except RuntimeError as e:
+        print("Strict load failed (shapes/keys mismatch). Attempting partial load with strict=False...")
+        # Show a short summary of missing/unexpected keys for debugging
+        try:
+            missing, unexpected = net.load_state_dict(state_dict, strict=False)
+        except Exception:
+            # Different torch versions return different exceptions / formats
+            # Fall back to printing the runtime error and then try non-strict load anyway
+            print("Warning: detailed strict=False diagnostic unavailable - attempting non-strict load.")
+            net.load_state_dict(state_dict, strict=False)
+        print("Partial load complete (strict=False).")
+        # Print a little hint for the user
+        print("If performance is poor, ensure the DQN code used for training and playing match exactly.")
     net.eval()
     return net
+
 
 def is_display_available():
     """Check if display is available for OpenCV."""
@@ -61,9 +115,8 @@ def play_visual(layout: str, net: DQN, episodes: int, delay_ms: int, scale: int)
         done, step, win = False, 0, False
 
         while not done and step < 1000:
-            with torch.no_grad():
-                action = int(net(torch.as_tensor(state, device=DEVICE)
-                                 .unsqueeze(0)).argmax())
+            # Use select_action with tie-breaking (training=False for greedy, but still breaks ties)
+            action = select_action(state, net, training=False, epsilon=0.0)
             state, _, done, _, _ = env.step(action)
             step += 1
             if done and not env.pellets:
@@ -108,17 +161,35 @@ def play_headless(layout: str, net: DQN, episodes: int):
         print(f"  Initial pellets: {initial_pellets}")
         print(f"  Starting position: Pac-Man at {env.pac_pos}, Ghost(s) at {env.ghost_pos}")
 
+        last_action = None
+        action_repeat_count = 0
+        
         while not done and step < 1000:
+            # Use select_action with tie-breaking
             with torch.no_grad():
                 q_values = net(torch.as_tensor(state, device=DEVICE).unsqueeze(0))
-                action = int(q_values.argmax())
+                q_vals = q_values.squeeze().cpu().numpy()
+            
+            # Break ties if Q-values are too similar
+            if q_vals.max() - q_vals.min() < 0.1:
+                q_vals = q_vals + np.random.normal(0, 0.01, size=q_vals.shape)
+            action = int(np.argmax(q_vals))
+            
+            # If stuck repeating same action, force random exploration
+            if action == last_action:
+                action_repeat_count += 1
+                if action_repeat_count > 10:
+                    action = random.randrange(4)
+                    action_repeat_count = 0
+            else:
+                action_repeat_count = 0
+            last_action = action
             
             # Print action details for first few steps or periodically
             if step < 5 or step % 100 == 0:
                 actions = ['UP', 'DOWN', 'LEFT', 'RIGHT']
-                q_vals = q_values.squeeze().cpu().numpy()
                 print(f"  Step {step}: Action={actions[action]}, "
-                      f"Q-values={[f'{q:.2f}' for q in q_vals]}, "
+                      f"Q-values={[f'{q:.2f}' for q in q_values.squeeze().cpu().numpy()]}, "
                       f"Pellets left: {len(env.pellets)}")
             
             state, reward, done, _, _ = env.step(action)

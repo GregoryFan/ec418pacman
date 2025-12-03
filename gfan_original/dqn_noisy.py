@@ -1,4 +1,4 @@
-# dqn_agent_noisy.py – Dueling DQN with NoisyLinear layers, Prioritized Replay, N-step returns
+# dqn_noisy.py – Dueling DQN with NoisyLinear layers, Prioritized Replay, N-step returns
 from __future__ import annotations
 import math, random
 from collections import deque
@@ -242,10 +242,30 @@ class ReplayMemory:
         pass  # No-op for standard replay
 
 # ───────────── Action Selection ─────────────
-def select_action(state: np.ndarray, net: DQN) -> int:
+def select_action(state: np.ndarray, net: DQN, training: bool = True, epsilon: float = 0.0) -> int:
+    """
+    Select action with optional epsilon-greedy exploration and tie-breaking.
+    
+    Args:
+        state: Current state
+        net: DQN network
+        training: If True, add small random noise to break ties
+        epsilon: Probability of random action (for additional exploration)
+    """
+    # Small epsilon-greedy even with noisy networks to break out of stuck states
+    if training and random.random() < epsilon:
+        return random.randrange(net.n_actions)
+    
     with torch.no_grad():
         q_values = net(torch.as_tensor(state, device=DEVICE).unsqueeze(0))
-        return int(q_values.argmax())
+        q_vals = q_values.squeeze(0).cpu().numpy()
+        
+        # If Q-values are too similar (within 0.1), add small noise to break ties
+        if training and q_vals.max() - q_vals.min() < 0.1:
+            # Add small random noise to break ties
+            q_vals = q_vals + np.random.normal(0, 0.01, size=q_vals.shape)
+        
+        return int(np.argmax(q_vals))
 #def select_action(state: np.ndarray, net: DQN, step: int, eps_start: float, eps_end: float, eps_decay: int) -> int:
 #  this was suppose to help when i switched to test classic but stll had 0% 
 #   eps = eps_end + (eps_start - eps_end) * math.exp(-1.0 * step / eps_decay)
