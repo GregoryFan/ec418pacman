@@ -127,11 +127,11 @@ class PacmanEnv(gym.Env):
         return self._render_board(), {}
 
     # ───────────────────────── step ────────────────────────────
-    def nearest_pellet_dist(self, pos, pellets):
-        if not pellets: 
-            return 0
-        px, py = pos
-        return min(abs(px - x) + abs(py - y) for (x, y) in pellets)
+    #def nearest_pellet_dist(self, pos, pellets):
+     #   if not pellets: 
+      #      return 0
+     #   px, py = pos
+      #  return min(abs(px - x) + abs(py - y) for (x, y) in pellets)
     
     def bfs_nearest_pellet(self, start):
         if not self.pellets:
@@ -199,7 +199,7 @@ class PacmanEnv(gym.Env):
         elif min_gdist == 2:   
             reward -= 0.3
 
-        #Penalty for being still (please move)
+        #Penalty for being still 
         if (px, py) == old_pos:
             reward -= 1  
         
