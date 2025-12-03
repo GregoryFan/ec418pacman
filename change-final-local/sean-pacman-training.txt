@@ -1,0 +1,11 @@
+Host: scc-506
+Directory: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final
+Tue Dec  2 16:37:03 EST 2025
+/projectnb/ds542/students/seansal2/.conda/envs/ec418-pacman/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:182: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+Host: scc-503
+Directory: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final
+Starting training: Tue Dec  2 22:19:41 EST 2025
+Phase 1: spiral_harder
+/projectnb/ds542/students/seansal2/.conda/envs/ec418-pacman/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:182: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(

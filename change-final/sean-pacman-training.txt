@@ -1,0 +1,665 @@
+Host: scc-506
+Directory: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final
+Tue Dec  2 16:37:03 EST 2025
+/projectnb/ds542/students/seansal2/.conda/envs/ec418-pacman/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:182: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+Host: scc-503
+Directory: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final
+Starting training: Tue Dec  2 22:19:41 EST 2025
+Phase 1: spiral_harder
+/projectnb/ds542/students/seansal2/.conda/envs/ec418-pacman/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:182: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+PyTorch device: cuda
+Frame stacking: 4 frames
+N-step returns: 3 steps
+
+============================================================
+Training on layout: spiral_harder
+Episodes: 1000
+Device: cuda
+Using N-Step: True, PER: True, Augmentation: True
+============================================================
+
+[spiral_harder] Ep   50 | Reward:   -61.1 | Avg(50):   -55.7 | WinRate:   2.0% | Steps:   21 | ε: 0.912 | LR: 4.97e-04
+[spiral_harder] Ep  100 | Reward:   131.2 | Avg(50):   -44.8 | WinRate:   6.0% | Steps:   91 | ε: 0.835 | LR: 4.88e-04
+[spiral_harder] Ep  150 | Reward:   -56.3 | Avg(50):   -55.9 | WinRate:   2.0% | Steps:    8 | ε: 0.758 | LR: 4.73e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  200 | Reward:   -56.2 | Avg(50):   -49.2 | WinRate:   4.0% | Steps:   10 | ε: 0.687 | LR: 4.53e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  250 | Reward:   -81.4 | Avg(50):   -32.7 | WinRate:  12.0% | Steps:   70 | ε: 0.618 | LR: 4.28e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  300 | Reward:   -46.1 | Avg(50):   -45.3 | WinRate:   4.0% | Steps:   21 | ε: 0.571 | LR: 3.99e-04
+[spiral_harder] Ep  350 | Reward:   -56.2 | Avg(50):    -4.7 | WinRate:  24.0% | Steps:   17 | ε: 0.516 | LR: 3.66e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  400 | Reward:   -46.5 | Avg(50):   -29.5 | WinRate:  12.0% | Steps:   16 | ε: 0.477 | LR: 3.31e-04
+[spiral_harder] Ep  450 | Reward:   -45.6 | Avg(50):   -31.4 | WinRate:  12.0% | Steps:   13 | ε: 0.440 | LR: 2.93e-04
+[spiral_harder] Ep  500 | Reward:   -52.7 | Avg(50):   -36.5 | WinRate:  10.0% | Steps:   33 | ε: 0.406 | LR: 2.55e-04
+  → Checkpoint saved: pacman_dqn_spiral_harder_ep500.pt
+[spiral_harder] Ep  550 | Reward:   -48.1 | Avg(50):     8.7 | WinRate:  30.0% | Steps:   16 | ε: 0.373 | LR: 2.17e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  600 | Reward:   -56.6 | Avg(50):    24.3 | WinRate:  36.0% | Steps:   33 | ε: 0.346 | LR: 1.79e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  650 | Reward:   159.6 | Avg(50):    38.5 | WinRate:  42.0% | Steps:   16 | ε: 0.324 | LR: 1.44e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  700 | Reward:   -44.3 | Avg(50):    10.5 | WinRate:  30.0% | Steps:   11 | ε: 0.302 | LR: 1.11e-04
+[spiral_harder] Ep  750 | Reward:   -43.9 | Avg(50):    31.5 | WinRate:  40.0% | Steps:    6 | ε: 0.279 | LR: 8.18e-05
+[spiral_harder] Ep  800 | Reward:   -49.7 | Avg(50):    15.7 | WinRate:  32.0% | Steps:   56 | ε: 0.260 | LR: 5.68e-05
+[spiral_harder] Ep  850 | Reward:   159.6 | Avg(50):    58.6 | WinRate:  52.0% | Steps:   38 | ε: 0.241 | LR: 3.67e-05
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  900 | Reward:   161.8 | Avg(50):    13.0 | WinRate:  30.0% | Steps:   31 | ε: 0.227 | LR: 2.20e-05
+[spiral_harder] Ep  950 | Reward:   -53.7 | Avg(50):    21.5 | WinRate:  34.0% | Steps:   22 | ε: 0.215 | LR: 1.30e-05
+[spiral_harder] Ep 1000 | Reward:   161.0 | Avg(50):    17.0 | WinRate:  32.0% | Steps:   21 | ε: 0.203 | LR: 1.00e-05
+  → Checkpoint saved: pacman_dqn_spiral_harder_ep1000.pt
+
+[spiral_harder] Training complete!
+  Final win rate (last 100): 33.0%
+  Saved to: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final/pacman_dqn_spiral_harder.pt
+Phase 2: classic (with transfer)
+/projectnb/ds542/students/seansal2/.conda/envs/ec418-pacman/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:182: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+PyTorch device: cuda
+Frame stacking: 4 frames
+N-step returns: 3 steps
+
+============================================================
+CURRICULUM LEARNING
+============================================================
+
+>>> Phase 1: spiral (basic navigation)
+
+============================================================
+Training on layout: spiral
+Episodes: 2000
+Device: cuda
+Using N-Step: True, PER: True, Augmentation: True
+============================================================
+
+[spiral] Ep   50 | Reward:   -44.4 | Avg(50):   -52.9 | WinRate:   0.0% | Steps:   18 | ε: 0.889 | LR: 4.99e-04
+[spiral] Ep  100 | Reward:   -52.5 | Avg(50):   -52.0 | WinRate:   0.0% | Steps:   10 | ε: 0.785 | LR: 4.97e-04
+[spiral] Ep  150 | Reward:   -74.1 | Avg(50):   -51.5 | WinRate:   2.0% | Steps:  125 | ε: 0.677 | LR: 4.93e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  200 | Reward:   -41.9 | Avg(50):   -47.6 | WinRate:   2.0% | Steps:   13 | ε: 0.580 | LR: 4.88e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  250 | Reward:   -55.0 | Avg(50):   -31.3 | WinRate:  14.0% | Steps:   54 | ε: 0.510 | LR: 4.81e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  300 | Reward:    86.4 | Avg(50):   -31.5 | WinRate:  14.0% | Steps:   26 | ε: 0.451 | LR: 4.73e-04
+[spiral] Ep  350 | Reward:   -55.0 | Avg(50):   -24.4 | WinRate:  18.0% | Steps:   16 | ε: 0.405 | LR: 4.64e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  400 | Reward:   -45.1 | Avg(50):   -16.1 | WinRate:  24.0% | Steps:   26 | ε: 0.368 | LR: 4.53e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  450 | Reward:   -42.1 | Avg(50):    11.0 | WinRate:  44.0% | Steps:   24 | ε: 0.333 | LR: 4.41e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  500 | Reward:   -40.8 | Avg(50):    18.0 | WinRate:  48.0% | Steps:   10 | ε: 0.311 | LR: 4.28e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  550 | Reward:   -42.7 | Avg(50):    20.5 | WinRate:  50.0% | Steps:    6 | ε: 0.290 | LR: 4.14e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  600 | Reward:   -51.6 | Avg(50):    23.2 | WinRate:  52.0% | Steps:   43 | ε: 0.268 | LR: 3.99e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  650 | Reward:    89.6 | Avg(50):    34.0 | WinRate:  60.0% | Steps:   14 | ε: 0.249 | LR: 3.83e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  700 | Reward:    87.4 | Avg(50):    16.5 | WinRate:  46.0% | Steps:   17 | ε: 0.235 | LR: 3.66e-04
+[spiral] Ep  750 | Reward:   -45.1 | Avg(50):    28.1 | WinRate:  56.0% | Steps:   18 | ε: 0.220 | LR: 3.49e-04
+[spiral] Ep  800 | Reward:   -48.1 | Avg(50):    38.5 | WinRate:  64.0% | Steps:   58 | ε: 0.205 | LR: 3.31e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep  850 | Reward:   -45.3 | Avg(50):    36.7 | WinRate:  62.0% | Steps:   18 | ε: 0.193 | LR: 3.12e-04
+[spiral] Ep  900 | Reward:    86.7 | Avg(50):    28.6 | WinRate:  56.0% | Steps:   16 | ε: 0.184 | LR: 2.93e-04
+[spiral] Ep  950 | Reward:   -42.7 | Avg(50):    22.8 | WinRate:  52.0% | Steps:   16 | ε: 0.174 | LR: 2.74e-04
+[spiral] Ep 1000 | Reward:    88.9 | Avg(50):    50.2 | WinRate:  72.0% | Steps:   16 | ε: 0.167 | LR: 2.55e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep 1050 | Reward:   -43.4 | Avg(50):    37.1 | WinRate:  62.0% | Steps:   15 | ε: 0.160 | LR: 2.36e-04
+[spiral] Ep 1100 | Reward:    89.3 | Avg(50):    58.1 | WinRate:  78.0% | Steps:   13 | ε: 0.154 | LR: 2.17e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep 1150 | Reward:    88.3 | Avg(50):    53.4 | WinRate:  74.0% | Steps:   15 | ε: 0.148 | LR: 1.98e-04
+[spiral] Ep 1200 | Reward:    85.9 | Avg(50):    49.8 | WinRate:  72.0% | Steps:   16 | ε: 0.143 | LR: 1.79e-04
+[spiral] Ep 1250 | Reward:    85.6 | Avg(50):    69.0 | WinRate:  86.0% | Steps:   18 | ε: 0.139 | LR: 1.61e-04
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep 1300 | Reward:    87.2 | Avg(50):    56.4 | WinRate:  76.0% | Steps:   16 | ε: 0.135 | LR: 1.44e-04
+[spiral] Ep 1350 | Reward:    91.2 | Avg(50):    66.0 | WinRate:  84.0% | Steps:   16 | ε: 0.131 | LR: 1.27e-04
+[spiral] Ep 1400 | Reward:    87.7 | Avg(50):    50.6 | WinRate:  72.0% | Steps:   14 | ε: 0.128 | LR: 1.11e-04
+[spiral] Ep 1450 | Reward:    90.8 | Avg(50):    55.9 | WinRate:  76.0% | Steps:   12 | ε: 0.125 | LR: 9.59e-05
+[spiral] Ep 1500 | Reward:    88.9 | Avg(50):    46.2 | WinRate:  68.0% | Steps:   13 | ε: 0.123 | LR: 8.18e-05
+[spiral] Ep 1550 | Reward:   -52.8 | Avg(50):    65.9 | WinRate:  84.0% | Steps:   11 | ε: 0.121 | LR: 6.87e-05
+[spiral] Ep 1600 | Reward:    87.7 | Avg(50):    64.1 | WinRate:  82.0% | Steps:   18 | ε: 0.119 | LR: 5.68e-05
+[spiral] Ep 1650 | Reward:    86.4 | Avg(50):    57.8 | WinRate:  78.0% | Steps:   26 | ε: 0.117 | LR: 4.61e-05
+[spiral] Ep 1700 | Reward:    89.7 | Avg(50):    64.3 | WinRate:  82.0% | Steps:   15 | ε: 0.115 | LR: 3.67e-05
+[spiral] Ep 1750 | Reward:    89.2 | Avg(50):    66.6 | WinRate:  84.0% | Steps:   23 | ε: 0.114 | LR: 2.86e-05
+[spiral] Ep 1800 | Reward:    89.7 | Avg(50):    57.0 | WinRate:  76.0% | Steps:   15 | ε: 0.112 | LR: 2.20e-05
+[spiral] Ep 1850 | Reward:    91.4 | Avg(50):    64.9 | WinRate:  82.0% | Steps:   15 | ε: 0.111 | LR: 1.68e-05
+[spiral] Ep 1900 | Reward:    90.2 | Avg(50):    64.2 | WinRate:  82.0% | Steps:   15 | ε: 0.110 | LR: 1.30e-05
+[spiral] Ep 1950 | Reward:    87.7 | Avg(50):    80.0 | WinRate:  94.0% | Steps:   28 | ε: 0.109 | LR: 1.08e-05
+  → New best model saved: pacman_dqn_spiral_best.pt
+[spiral] Ep 2000 | Reward:    86.2 | Avg(50):    55.6 | WinRate:  76.0% | Steps:   21 | ε: 0.108 | LR: 1.00e-05
+
+[spiral] Training complete!
+  Final win rate (last 100): 85.0%
+  Saved to: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final/pacman_dqn_spiral.pt
+
+>>> Phase 2: spiral_harder (aggressive ghost)
+
+============================================================
+Training on layout: spiral_harder
+Episodes: 2000
+Device: cuda
+Using N-Step: True, PER: True, Augmentation: True
+============================================================
+
+Loading weights from pacman_dqn_spiral.pt
+[spiral_harder] Ep   50 | Reward:   -47.9 | Avg(50):   -33.7 | WinRate:  12.0% | Steps:   40 | ε: 0.432 | LR: 4.99e-04
+[spiral_harder] Ep  100 | Reward:    75.8 | Avg(50):   -40.6 | WinRate:   8.0% | Steps:   58 | ε: 0.370 | LR: 4.97e-04
+[spiral_harder] Ep  150 | Reward:    84.0 | Avg(50):   -28.5 | WinRate:  18.0% | Steps:   34 | ε: 0.298 | LR: 4.93e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  200 | Reward:   -43.2 | Avg(50):   -18.0 | WinRate:  24.0% | Steps:   32 | ε: 0.256 | LR: 4.88e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  250 | Reward:   -44.9 | Avg(50):   -17.5 | WinRate:  24.0% | Steps:    8 | ε: 0.224 | LR: 4.81e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  300 | Reward:   -42.9 | Avg(50):     0.4 | WinRate:  38.0% | Steps:   31 | ε: 0.195 | LR: 4.73e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  350 | Reward:   -55.8 | Avg(50):     9.6 | WinRate:  44.0% | Steps:    9 | ε: 0.174 | LR: 4.64e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  400 | Reward:    85.6 | Avg(50):    26.7 | WinRate:  56.0% | Steps:   17 | ε: 0.158 | LR: 4.53e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  450 | Reward:   -41.6 | Avg(50):     9.1 | WinRate:  44.0% | Steps:   10 | ε: 0.144 | LR: 4.41e-04
+[spiral_harder] Ep  500 | Reward:   -43.0 | Avg(50):    12.1 | WinRate:  46.0% | Steps:   18 | ε: 0.130 | LR: 4.28e-04
+[spiral_harder] Ep  550 | Reward:   -45.8 | Avg(50):    21.3 | WinRate:  52.0% | Steps:   18 | ε: 0.120 | LR: 4.14e-04
+[spiral_harder] Ep  600 | Reward:   -43.1 | Avg(50):    32.3 | WinRate:  60.0% | Steps:   11 | ε: 0.111 | LR: 3.99e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  650 | Reward:    87.8 | Avg(50):    31.4 | WinRate:  60.0% | Steps:   25 | ε: 0.103 | LR: 3.83e-04
+[spiral_harder] Ep  700 | Reward:    83.1 | Avg(50):    52.1 | WinRate:  74.0% | Steps:   30 | ε: 0.097 | LR: 3.66e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep  750 | Reward:   -54.5 | Avg(50):    28.4 | WinRate:  58.0% | Steps:    7 | ε: 0.091 | LR: 3.49e-04
+[spiral_harder] Ep  800 | Reward:   -54.3 | Avg(50):    43.4 | WinRate:  68.0% | Steps:    9 | ε: 0.086 | LR: 3.31e-04
+[spiral_harder] Ep  850 | Reward:   -45.1 | Avg(50):    28.6 | WinRate:  58.0% | Steps:   23 | ε: 0.081 | LR: 3.12e-04
+[spiral_harder] Ep  900 | Reward:    88.9 | Avg(50):    42.4 | WinRate:  68.0% | Steps:   17 | ε: 0.077 | LR: 2.93e-04
+[spiral_harder] Ep  950 | Reward:   -51.9 | Avg(50):    37.7 | WinRate:  64.0% | Steps:   37 | ε: 0.073 | LR: 2.74e-04
+[spiral_harder] Ep 1000 | Reward:    86.1 | Avg(50):    46.2 | WinRate:  70.0% | Steps:   22 | ε: 0.071 | LR: 2.55e-04
+[spiral_harder] Ep 1050 | Reward:    89.6 | Avg(50):    25.0 | WinRate:  54.0% | Steps:   14 | ε: 0.068 | LR: 2.36e-04
+[spiral_harder] Ep 1100 | Reward:    89.4 | Avg(50):    54.3 | WinRate:  76.0% | Steps:   17 | ε: 0.066 | LR: 2.17e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep 1150 | Reward:    88.5 | Avg(50):    42.4 | WinRate:  68.0% | Steps:   14 | ε: 0.064 | LR: 1.98e-04
+[spiral_harder] Ep 1200 | Reward:    88.5 | Avg(50):    49.5 | WinRate:  72.0% | Steps:   24 | ε: 0.062 | LR: 1.79e-04
+[spiral_harder] Ep 1250 | Reward:    88.6 | Avg(50):    40.4 | WinRate:  66.0% | Steps:   15 | ε: 0.061 | LR: 1.61e-04
+[spiral_harder] Ep 1300 | Reward:    88.6 | Avg(50):    64.6 | WinRate:  84.0% | Steps:   14 | ε: 0.060 | LR: 1.44e-04
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep 1350 | Reward:    90.1 | Avg(50):    51.2 | WinRate:  74.0% | Steps:   12 | ε: 0.058 | LR: 1.27e-04
+[spiral_harder] Ep 1400 | Reward:   -48.7 | Avg(50):    59.2 | WinRate:  80.0% | Steps:   25 | ε: 0.057 | LR: 1.11e-04
+[spiral_harder] Ep 1450 | Reward:    91.4 | Avg(50):    45.7 | WinRate:  70.0% | Steps:   13 | ε: 0.057 | LR: 9.59e-05
+[spiral_harder] Ep 1500 | Reward:    68.2 | Avg(50):    62.2 | WinRate:  82.0% | Steps:   51 | ε: 0.056 | LR: 8.18e-05
+[spiral_harder] Ep 1550 | Reward:    87.9 | Avg(50):    57.0 | WinRate:  78.0% | Steps:   16 | ε: 0.055 | LR: 6.87e-05
+[spiral_harder] Ep 1600 | Reward:    88.0 | Avg(50):    51.4 | WinRate:  74.0% | Steps:   24 | ε: 0.054 | LR: 5.68e-05
+[spiral_harder] Ep 1650 | Reward:   -51.0 | Avg(50):    51.2 | WinRate:  74.0% | Steps:   37 | ε: 0.054 | LR: 4.61e-05
+[spiral_harder] Ep 1700 | Reward:    82.2 | Avg(50):    51.6 | WinRate:  74.0% | Steps:   23 | ε: 0.053 | LR: 3.67e-05
+[spiral_harder] Ep 1750 | Reward:    86.0 | Avg(50):    62.7 | WinRate:  82.0% | Steps:   31 | ε: 0.053 | LR: 2.86e-05
+[spiral_harder] Ep 1800 | Reward:    89.0 | Avg(50):    59.9 | WinRate:  80.0% | Steps:   13 | ε: 0.053 | LR: 2.20e-05
+[spiral_harder] Ep 1850 | Reward:   -46.1 | Avg(50):    45.4 | WinRate:  70.0% | Steps:   16 | ε: 0.052 | LR: 1.68e-05
+[spiral_harder] Ep 1900 | Reward:   -46.6 | Avg(50):    70.8 | WinRate:  88.0% | Steps:   35 | ε: 0.052 | LR: 1.30e-05
+  → New best model saved: pacman_dqn_spiral_harder_best.pt
+[spiral_harder] Ep 1950 | Reward:    85.9 | Avg(50):    53.5 | WinRate:  76.0% | Steps:   22 | ε: 0.052 | LR: 1.08e-05
+[spiral_harder] Ep 2000 | Reward:    84.4 | Avg(50):    55.2 | WinRate:  76.0% | Steps:   25 | ε: 0.052 | LR: 1.00e-05
+
+[spiral_harder] Training complete!
+  Final win rate (last 100): 76.0%
+  Saved to: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final/pacman_dqn_spiral_harder.pt
+
+>>> Phase 3: empty (open space)
+
+============================================================
+Training on layout: empty
+Episodes: 2000
+Device: cuda
+Using N-Step: True, PER: True, Augmentation: True
+============================================================
+
+Loading weights from pacman_dqn_spiral_harder.pt
+[empty] Ep   50 | Reward:   -53.3 | Avg(50):   -54.9 | WinRate:   0.0% | Steps:   13 | ε: 0.370 | LR: 4.99e-04
+[empty] Ep  100 | Reward:   -54.2 | Avg(50):   -54.7 | WinRate:   0.0% | Steps:   12 | ε: 0.341 | LR: 4.97e-04
+[empty] Ep  150 | Reward:   -52.2 | Avg(50):   -54.0 | WinRate:   0.0% | Steps:   11 | ε: 0.314 | LR: 4.93e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep  200 | Reward:   -56.6 | Avg(50):   -54.8 | WinRate:   0.0% | Steps:   25 | ε: 0.292 | LR: 4.88e-04
+[empty] Ep  250 | Reward:   -51.6 | Avg(50):   -54.9 | WinRate:   0.0% | Steps:    8 | ε: 0.272 | LR: 4.81e-04
+[empty] Ep  300 | Reward:   -52.6 | Avg(50):   -55.1 | WinRate:   0.0% | Steps:   11 | ε: 0.252 | LR: 4.73e-04
+[empty] Ep  350 | Reward:   -60.5 | Avg(50):   -54.6 | WinRate:   0.0% | Steps:   20 | ε: 0.235 | LR: 4.64e-04
+[empty] Ep  400 | Reward:   -54.1 | Avg(50):   -53.8 | WinRate:   0.0% | Steps:   10 | ε: 0.218 | LR: 4.53e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep  450 | Reward:   -43.1 | Avg(50):   -52.9 | WinRate:   0.0% | Steps:   17 | ε: 0.200 | LR: 4.41e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep  500 | Reward:   -57.0 | Avg(50):   -52.6 | WinRate:   0.0% | Steps:   18 | ε: 0.185 | LR: 4.28e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep  550 | Reward:   -42.6 | Avg(50):   -51.4 | WinRate:   0.0% | Steps:   13 | ε: 0.172 | LR: 4.14e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep  600 | Reward:   -45.8 | Avg(50):   -51.6 | WinRate:   0.0% | Steps:   18 | ε: 0.161 | LR: 3.99e-04
+[empty] Ep  650 | Reward:   -43.6 | Avg(50):   -50.2 | WinRate:   0.0% | Steps:   13 | ε: 0.152 | LR: 3.83e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep  700 | Reward:   -53.5 | Avg(50):   -51.6 | WinRate:   0.0% | Steps:   18 | ε: 0.143 | LR: 3.66e-04
+[empty] Ep  750 | Reward:   -54.0 | Avg(50):   -51.3 | WinRate:   0.0% | Steps:   13 | ε: 0.134 | LR: 3.49e-04
+[empty] Ep  800 | Reward:   -52.4 | Avg(50):   -50.1 | WinRate:   0.0% | Steps:    9 | ε: 0.127 | LR: 3.31e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep  850 | Reward:   -53.6 | Avg(50):   -50.2 | WinRate:   0.0% | Steps:   18 | ε: 0.120 | LR: 3.12e-04
+[empty] Ep  900 | Reward:   -51.6 | Avg(50):   -50.9 | WinRate:   0.0% | Steps:   11 | ε: 0.113 | LR: 2.93e-04
+[empty] Ep  950 | Reward:   -42.3 | Avg(50):   -49.4 | WinRate:   0.0% | Steps:   10 | ε: 0.107 | LR: 2.74e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep 1000 | Reward:   -53.4 | Avg(50):   -49.8 | WinRate:   0.0% | Steps:   17 | ε: 0.101 | LR: 2.55e-04
+[empty] Ep 1050 | Reward:   -53.9 | Avg(50):   -50.1 | WinRate:   0.0% | Steps:   17 | ε: 0.096 | LR: 2.36e-04
+[empty] Ep 1100 | Reward:   -43.1 | Avg(50):   -49.7 | WinRate:   0.0% | Steps:    9 | ε: 0.092 | LR: 2.17e-04
+[empty] Ep 1150 | Reward:   -43.3 | Avg(50):   -49.9 | WinRate:   0.0% | Steps:   10 | ε: 0.088 | LR: 1.98e-04
+[empty] Ep 1200 | Reward:   -44.6 | Avg(50):   -48.7 | WinRate:   0.0% | Steps:   12 | ε: 0.084 | LR: 1.79e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep 1250 | Reward:   -56.0 | Avg(50):   -48.5 | WinRate:   0.0% | Steps:   15 | ε: 0.081 | LR: 1.61e-04
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep 1300 | Reward:   -45.1 | Avg(50):   -49.5 | WinRate:   0.0% | Steps:   15 | ε: 0.078 | LR: 1.44e-04
+[empty] Ep 1350 | Reward:   -74.6 | Avg(50):   -49.0 | WinRate:   0.0% | Steps:   57 | ε: 0.075 | LR: 1.27e-04
+[empty] Ep 1400 | Reward:   -44.3 | Avg(50):   -50.3 | WinRate:   0.0% | Steps:   17 | ε: 0.073 | LR: 1.11e-04
+[empty] Ep 1450 | Reward:   -42.7 | Avg(50):   -49.2 | WinRate:   0.0% | Steps:   25 | ε: 0.071 | LR: 9.59e-05
+[empty] Ep 1500 | Reward:   -52.2 | Avg(50):   -50.0 | WinRate:   0.0% | Steps:   41 | ε: 0.069 | LR: 8.18e-05
+[empty] Ep 1550 | Reward:   -53.1 | Avg(50):   -49.1 | WinRate:   0.0% | Steps:   10 | ε: 0.067 | LR: 6.87e-05
+[empty] Ep 1600 | Reward:   -40.8 | Avg(50):   -48.9 | WinRate:   0.0% | Steps:   10 | ε: 0.065 | LR: 5.68e-05
+[empty] Ep 1650 | Reward:   -51.7 | Avg(50):   -50.1 | WinRate:   0.0% | Steps:    9 | ε: 0.064 | LR: 4.61e-05
+[empty] Ep 1700 | Reward:   -41.7 | Avg(50):   -47.0 | WinRate:   2.0% | Steps:   12 | ε: 0.062 | LR: 3.67e-05
+  → New best model saved: pacman_dqn_empty_best.pt
+[empty] Ep 1750 | Reward:   -60.2 | Avg(50):   -48.0 | WinRate:   0.0% | Steps:   22 | ε: 0.061 | LR: 2.86e-05
+[empty] Ep 1800 | Reward:   -44.3 | Avg(50):   -49.9 | WinRate:   0.0% | Steps:   10 | ε: 0.060 | LR: 2.20e-05
+[empty] Ep 1850 | Reward:   -52.6 | Avg(50):   -48.5 | WinRate:   0.0% | Steps:    9 | ε: 0.059 | LR: 1.68e-05
+[empty] Ep 1900 | Reward:   -52.9 | Avg(50):   -47.3 | WinRate:   0.0% | Steps:   13 | ε: 0.058 | LR: 1.30e-05
+[empty] Ep 1950 | Reward:   -46.6 | Avg(50):   -47.6 | WinRate:   0.0% | Steps:   18 | ε: 0.058 | LR: 1.08e-05
+[empty] Ep 2000 | Reward:   -53.0 | Avg(50):   -49.3 | WinRate:   0.0% | Steps:    9 | ε: 0.057 | LR: 1.00e-05
+
+[empty] Training complete!
+  Final win rate (last 100): 0.0%
+  Saved to: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final/pacman_dqn_empty.pt
+
+>>> Phase 4: classic (full maze) - Extended training
+
+============================================================
+Training on layout: classic
+Episodes: 4000
+Device: cuda
+Using N-Step: True, PER: True, Augmentation: True
+============================================================
+
+Loading weights from pacman_dqn_empty.pt
+[classic] Ep   50 | Reward:   168.1 | Avg(50):   275.7 | WinRate:   0.0% | Steps:   31 | ε: 0.214 | LR: 5.00e-04
+[classic] Ep  100 | Reward:    35.1 | Avg(50):   327.5 | WinRate:   0.0% | Steps:   16 | ε: 0.150 | LR: 4.99e-04
+[classic] Ep  150 | Reward:    78.4 | Avg(50):   361.6 | WinRate:   0.0% | Steps:   20 | ε: 0.115 | LR: 4.98e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  200 | Reward:   466.0 | Avg(50):   509.5 | WinRate:   0.0% | Steps:   68 | ε: 0.076 | LR: 4.97e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  250 | Reward:  1070.4 | Avg(50):   553.2 | WinRate:   0.0% | Steps:  283 | ε: 0.053 | LR: 4.95e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  300 | Reward:   642.7 | Avg(50):   530.9 | WinRate:   0.0% | Steps:  105 | ε: 0.041 | LR: 4.93e-04
+[classic] Ep  350 | Reward:   615.1 | Avg(50):   598.2 | WinRate:   0.0% | Steps:   81 | ε: 0.032 | LR: 4.91e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  400 | Reward:   871.2 | Avg(50):   551.3 | WinRate:   0.0% | Steps:  141 | ε: 0.028 | LR: 4.88e-04
+[classic] Ep  450 | Reward:   166.0 | Avg(50):   627.5 | WinRate:   0.0% | Steps:   40 | ε: 0.025 | LR: 4.85e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  500 | Reward:  1033.0 | Avg(50):   762.8 | WinRate:   0.0% | Steps:  195 | ε: 0.023 | LR: 4.81e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+  → Checkpoint saved: pacman_dqn_classic_ep500.pt
+[classic] Ep  550 | Reward:   856.2 | Avg(50):   732.1 | WinRate:   0.0% | Steps:  156 | ε: 0.021 | LR: 4.77e-04
+[classic] Ep  600 | Reward:   470.3 | Avg(50):   708.7 | WinRate:   0.0% | Steps:  115 | ε: 0.021 | LR: 4.73e-04
+[classic] Ep  650 | Reward:   561.7 | Avg(50):   621.5 | WinRate:   0.0% | Steps:   69 | ε: 0.021 | LR: 4.69e-04
+[classic] Ep  700 | Reward:   599.0 | Avg(50):   783.8 | WinRate:   0.0% | Steps:   69 | ε: 0.020 | LR: 4.64e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  750 | Reward:  1168.9 | Avg(50):   780.9 | WinRate:   0.0% | Steps:  536 | ε: 0.020 | LR: 4.59e-04
+[classic] Ep  800 | Reward:   356.7 | Avg(50):   739.4 | WinRate:   0.0% | Steps:   50 | ε: 0.020 | LR: 4.53e-04
+[classic] Ep  850 | Reward:  1354.4 | Avg(50):   790.5 | WinRate:   0.0% | Steps:  377 | ε: 0.020 | LR: 4.47e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  900 | Reward:  1172.4 | Avg(50):   733.0 | WinRate:   0.0% | Steps:  164 | ε: 0.020 | LR: 4.41e-04
+[classic] Ep  950 | Reward:  1326.9 | Avg(50):   783.8 | WinRate:   0.0% | Steps:  739 | ε: 0.020 | LR: 4.35e-04
+[classic] Ep 1000 | Reward:   928.1 | Avg(50):   799.6 | WinRate:   0.0% | Steps:  107 | ε: 0.020 | LR: 4.28e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+  → Checkpoint saved: pacman_dqn_classic_ep1000.pt
+[classic] Ep 1050 | Reward:   742.8 | Avg(50):   819.7 | WinRate:   0.0% | Steps:   79 | ε: 0.020 | LR: 4.21e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 1100 | Reward:   168.5 | Avg(50):   767.0 | WinRate:   0.0% | Steps:   29 | ε: 0.020 | LR: 4.14e-04
+[classic] Ep 1150 | Reward:   202.2 | Avg(50):   783.7 | WinRate:   0.0% | Steps:   26 | ε: 0.020 | LR: 4.07e-04
+[classic] Ep 1200 | Reward:   801.7 | Avg(50):   872.6 | WinRate:   0.0% | Steps:   91 | ε: 0.020 | LR: 3.99e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 1250 | Reward:  1019.9 | Avg(50):   780.9 | WinRate:   0.0% | Steps:  107 | ε: 0.020 | LR: 3.91e-04
+[classic] Ep 1300 | Reward:   891.5 | Avg(50):   809.5 | WinRate:   0.0% | Steps:  106 | ε: 0.020 | LR: 3.83e-04
+[classic] Ep 1350 | Reward:   330.6 | Avg(50):   841.0 | WinRate:   0.0% | Steps:   45 | ε: 0.020 | LR: 3.75e-04
+[classic] Ep 1400 | Reward:  1274.5 | Avg(50):   798.3 | WinRate:   0.0% | Steps:  578 | ε: 0.020 | LR: 3.66e-04
+[classic] Ep 1450 | Reward:   223.6 | Avg(50):   815.5 | WinRate:   0.0% | Steps:   29 | ε: 0.020 | LR: 3.58e-04
+[classic] Ep 1500 | Reward:   139.7 | Avg(50):   808.7 | WinRate:   0.0% | Steps:   24 | ε: 0.020 | LR: 3.49e-04
+  → Checkpoint saved: pacman_dqn_classic_ep1500.pt
+[classic] Ep 1550 | Reward:   878.9 | Avg(50):   832.1 | WinRate:   0.0% | Steps:  102 | ε: 0.020 | LR: 3.40e-04
+[classic] Ep 1600 | Reward:   139.6 | Avg(50):   865.5 | WinRate:   0.0% | Steps:   22 | ε: 0.020 | LR: 3.31e-04
+[classic] Ep 1650 | Reward:  1326.0 | Avg(50):   873.9 | WinRate:   0.0% | Steps:  330 | ε: 0.020 | LR: 3.22e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 1700 | Reward:  1292.5 | Avg(50):   796.6 | WinRate:   0.0% | Steps:  398 | ε: 0.020 | LR: 3.12e-04
+[classic] Ep 1750 | Reward:   324.2 | Avg(50):   752.9 | WinRate:   0.0% | Steps:   38 | ε: 0.020 | LR: 3.03e-04
+[classic] Ep 1800 | Reward:   704.5 | Avg(50):   877.7 | WinRate:   0.0% | Steps:   77 | ε: 0.020 | LR: 2.93e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 1850 | Reward:   700.1 | Avg(50):   815.1 | WinRate:   0.0% | Steps:   78 | ε: 0.020 | LR: 2.84e-04
+[classic] Ep 1900 | Reward:  1160.0 | Avg(50):   800.5 | WinRate:   0.0% | Steps:  134 | ε: 0.020 | LR: 2.74e-04
+[classic] Ep 1950 | Reward:   406.2 | Avg(50):   883.0 | WinRate:   0.0% | Steps:   46 | ε: 0.020 | LR: 2.65e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 2000 | Reward:  1148.1 | Avg(50):   921.1 | WinRate:   0.0% | Steps:  125 | ε: 0.020 | LR: 2.55e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+  → Checkpoint saved: pacman_dqn_classic_ep2000.pt
+[classic] Ep 2050 | Reward:   832.0 | Avg(50):   899.0 | WinRate:   0.0% | Steps:   90 | ε: 0.020 | LR: 2.45e-04
+[classic] Ep 2100 | Reward:   518.8 | Avg(50):   835.8 | WinRate:   0.0% | Steps:   57 | ε: 0.020 | LR: 2.36e-04
+[classic] Ep 2150 | Reward:  1301.8 | Avg(50):   867.6 | WinRate:   0.0% | Steps:  275 | ε: 0.020 | LR: 2.26e-04
+[classic] Ep 2200 | Reward:   220.1 | Avg(50):   853.7 | WinRate:   0.0% | Steps:   28 | ε: 0.020 | LR: 2.17e-04
+[classic] Ep 2250 | Reward:   811.7 | Avg(50):   728.0 | WinRate:   0.0% | Steps:   94 | ε: 0.020 | LR: 2.07e-04
+[classic] Ep 2300 | Reward:   781.4 | Avg(50):   869.3 | WinRate:   0.0% | Steps:   85 | ε: 0.020 | LR: 1.98e-04
+[classic] Ep 2350 | Reward:  1354.8 | Avg(50):   801.4 | WinRate:   0.0% | Steps:  252 | ε: 0.020 | LR: 1.88e-04
+[classic] Ep 2400 | Reward:   653.7 | Avg(50):   791.8 | WinRate:   0.0% | Steps:   80 | ε: 0.020 | LR: 1.79e-04
+[classic] Ep 2450 | Reward:  1335.6 | Avg(50):   865.6 | WinRate:   0.0% | Steps:  389 | ε: 0.020 | LR: 1.70e-04
+[classic] Ep 2500 | Reward:   984.0 | Avg(50):   850.6 | WinRate:   0.0% | Steps:  111 | ε: 0.020 | LR: 1.61e-04
+  → Checkpoint saved: pacman_dqn_classic_ep2500.pt
+[classic] Ep 2550 | Reward:  1380.9 | Avg(50):   904.1 | WinRate:   0.0% | Steps:  437 | ε: 0.020 | LR: 1.52e-04
+[classic] Ep 2600 | Reward:   718.7 | Avg(50):   805.7 | WinRate:   0.0% | Steps:   77 | ε: 0.020 | LR: 1.44e-04
+[classic] Ep 2650 | Reward:  1356.3 | Avg(50):   903.6 | WinRate:   0.0% | Steps:  451 | ε: 0.020 | LR: 1.35e-04
+[classic] Ep 2700 | Reward:   728.9 | Avg(50):   814.8 | WinRate:   0.0% | Steps:   81 | ε: 0.020 | LR: 1.27e-04
+[classic] Ep 2750 | Reward:   294.2 | Avg(50):   778.5 | WinRate:   0.0% | Steps:   35 | ε: 0.020 | LR: 1.19e-04
+[classic] Ep 2800 | Reward:   762.0 | Avg(50):   870.7 | WinRate:   0.0% | Steps:   83 | ε: 0.020 | LR: 1.11e-04
+[classic] Ep 2850 | Reward:   606.4 | Avg(50):   828.2 | WinRate:   0.0% | Steps:   74 | ε: 0.020 | LR: 1.03e-04
+[classic] Ep 2900 | Reward:   569.1 | Avg(50):   943.7 | WinRate:   0.0% | Steps:   62 | ε: 0.020 | LR: 9.59e-05
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 2950 | Reward:   872.9 | Avg(50):   803.4 | WinRate:   0.0% | Steps:   94 | ε: 0.020 | LR: 8.87e-05
+[classic] Ep 3000 | Reward:   694.7 | Avg(50):   826.0 | WinRate:   0.0% | Steps:   81 | ε: 0.020 | LR: 8.18e-05
+  → Checkpoint saved: pacman_dqn_classic_ep3000.pt
+[classic] Ep 3050 | Reward:   733.8 | Avg(50):   848.7 | WinRate:   0.0% | Steps:   78 | ε: 0.020 | LR: 7.51e-05
+[classic] Ep 3100 | Reward:   785.6 | Avg(50):   809.9 | WinRate:   0.0% | Steps:   99 | ε: 0.020 | LR: 6.87e-05
+[classic] Ep 3150 | Reward:   875.2 | Avg(50):   917.4 | WinRate:   0.0% | Steps:   98 | ε: 0.020 | LR: 6.26e-05
+[classic] Ep 3200 | Reward:  1265.7 | Avg(50):   931.7 | WinRate:   0.0% | Steps:  182 | ε: 0.020 | LR: 5.68e-05
+[classic] Ep 3250 | Reward:   978.9 | Avg(50):   935.8 | WinRate:   0.0% | Steps:  140 | ε: 0.020 | LR: 5.13e-05
+[classic] Ep 3300 | Reward:  1228.9 | Avg(50):   843.5 | WinRate:   0.0% | Steps:  147 | ε: 0.020 | LR: 4.61e-05
+[classic] Ep 3350 | Reward:  1254.5 | Avg(50):   881.4 | WinRate:   0.0% | Steps:  141 | ε: 0.020 | LR: 4.12e-05
+[classic] Ep 3400 | Reward:   974.9 | Avg(50):   872.7 | WinRate:   0.0% | Steps:  140 | ε: 0.020 | LR: 3.67e-05
+[classic] Ep 3450 | Reward:  1325.6 | Avg(50):   852.5 | WinRate:   0.0% | Steps:  197 | ε: 0.020 | LR: 3.25e-05
+[classic] Ep 3500 | Reward:  1050.8 | Avg(50):   800.6 | WinRate:   0.0% | Steps:  136 | ε: 0.020 | LR: 2.86e-05
+  → Checkpoint saved: pacman_dqn_classic_ep3500.pt
+[classic] Ep 3550 | Reward:   141.0 | Avg(50):   820.5 | WinRate:   0.0% | Steps:   20 | ε: 0.020 | LR: 2.51e-05
+[classic] Ep 3600 | Reward:   832.6 | Avg(50):   862.8 | WinRate:   0.0% | Steps:   91 | ε: 0.020 | LR: 2.20e-05
+[classic] Ep 3650 | Reward:  1017.9 | Avg(50):   708.5 | WinRate:   0.0% | Steps:  113 | ε: 0.020 | LR: 1.92e-05
+[classic] Ep 3700 | Reward:    78.4 | Avg(50):   864.5 | WinRate:   0.0% | Steps:   14 | ε: 0.020 | LR: 1.68e-05
+[classic] Ep 3750 | Reward:    90.4 | Avg(50):   733.1 | WinRate:   0.0% | Steps:   15 | ε: 0.020 | LR: 1.47e-05
+[classic] Ep 3800 | Reward:   917.5 | Avg(50):   756.2 | WinRate:   0.0% | Steps:  122 | ε: 0.020 | LR: 1.30e-05
+[classic] Ep 3850 | Reward:   424.2 | Avg(50):   742.9 | WinRate:   0.0% | Steps:   48 | ε: 0.020 | LR: 1.17e-05
+[classic] Ep 3900 | Reward:   414.4 | Avg(50):   821.8 | WinRate:   0.0% | Steps:   49 | ε: 0.020 | LR: 1.08e-05
+[classic] Ep 3950 | Reward:  1127.5 | Avg(50):   892.5 | WinRate:   0.0% | Steps:  118 | ε: 0.020 | LR: 1.02e-05
+[classic] Ep 4000 | Reward:   908.5 | Avg(50):   828.5 | WinRate:   0.0% | Steps:   99 | ε: 0.020 | LR: 1.00e-05
+  → Checkpoint saved: pacman_dqn_classic_ep4000.pt
+
+[classic] Training complete!
+  Final win rate (last 100): 0.0%
+  Saved to: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final/pacman_dqn_classic.pt
+
+>>> Phase 5: Multi-task fine-tuning
+
+============================================================
+Multi-task training on layouts: ['classic', 'spiral', 'spiral_harder', 'empty']
+Episodes per layout: 500
+Device: cuda
+============================================================
+
+Loading weights from pacman_dqn_classic.pt
+
+[Multi-task] Episode 100/2000
+  classic        : Eps=  33, AvgReward=  158.7, WinRate=  0.0%
+  spiral         : Eps=  16, AvgReward=  -54.5, WinRate=  0.0%
+  spiral_harder  : Eps=  25, AvgReward=  -53.1, WinRate=  0.0%
+  empty          : Eps=  26, AvgReward=  -54.9, WinRate=  0.0%
+
+[Multi-task] Episode 200/2000
+  classic        : Eps=  70, AvgReward=  220.0, WinRate=  0.0%
+  spiral         : Eps=  28, AvgReward=  -49.0, WinRate=  3.6%
+  spiral_harder  : Eps=  54, AvgReward=  -53.5, WinRate=  0.0%
+  empty          : Eps=  48, AvgReward=  -54.6, WinRate=  0.0%
+
+[Multi-task] Episode 300/2000
+  classic        : Eps= 114, AvgReward=  263.1, WinRate=  0.0%
+  spiral         : Eps=  41, AvgReward=  -49.1, WinRate=  2.4%
+  spiral_harder  : Eps=  75, AvgReward=  -49.0, WinRate=  2.0%
+  empty          : Eps=  70, AvgReward=  -55.1, WinRate=  0.0%
+
+[Multi-task] Episode 400/2000
+  classic        : Eps= 141, AvgReward=  328.8, WinRate=  0.0%
+  spiral         : Eps=  63, AvgReward=  -44.1, WinRate=  6.0%
+  spiral_harder  : Eps=  96, AvgReward=  -46.5, WinRate=  4.0%
+  empty          : Eps= 100, AvgReward=  -55.6, WinRate=  0.0%
+
+[Multi-task] Episode 500/2000
+  classic        : Eps= 175, AvgReward=  376.5, WinRate=  0.0%
+  spiral         : Eps=  77, AvgReward=  -46.0, WinRate=  4.0%
+  spiral_harder  : Eps= 123, AvgReward=  -46.9, WinRate=  4.0%
+  empty          : Eps= 125, AvgReward=  -54.9, WinRate=  0.0%
+
+[Multi-task] Episode 600/2000
+  classic        : Eps= 216, AvgReward=  437.0, WinRate=  0.0%
+  spiral         : Eps=  88, AvgReward=  -43.9, WinRate=  6.0%
+  spiral_harder  : Eps= 147, AvgReward=  -46.0, WinRate=  4.0%
+  empty          : Eps= 149, AvgReward=  -54.5, WinRate=  0.0%
+
+[Multi-task] Episode 700/2000
+  classic        : Eps= 255, AvgReward=  506.2, WinRate=  0.0%
+  spiral         : Eps= 102, AvgReward=  -50.5, WinRate=  2.0%
+  spiral_harder  : Eps= 174, AvgReward=  -50.7, WinRate=  2.0%
+  empty          : Eps= 169, AvgReward=  -54.4, WinRate=  0.0%
+
+[Multi-task] Episode 800/2000
+  classic        : Eps= 283, AvgReward=  446.7, WinRate=  0.0%
+  spiral         : Eps= 117, AvgReward=  -48.4, WinRate=  6.0%
+  spiral_harder  : Eps= 201, AvgReward=  -54.6, WinRate=  0.0%
+  empty          : Eps= 199, AvgReward=  -54.2, WinRate=  0.0%
+
+[Multi-task] Episode 900/2000
+  classic        : Eps= 319, AvgReward=  368.9, WinRate=  0.0%
+  spiral         : Eps= 132, AvgReward=  -52.1, WinRate=  4.0%
+  spiral_harder  : Eps= 222, AvgReward=  -53.9, WinRate=  0.0%
+  empty          : Eps= 227, AvgReward=  -54.3, WinRate=  0.0%
+
+[Multi-task] Episode 1000/2000
+  classic        : Eps= 344, AvgReward=  341.4, WinRate=  0.0%
+  spiral         : Eps= 147, AvgReward=  -49.4, WinRate=  6.0%
+  spiral_harder  : Eps= 253, AvgReward=  -50.2, WinRate=  4.0%
+  empty          : Eps= 256, AvgReward=  -54.7, WinRate=  0.0%
+
+[Multi-task] Episode 1100/2000
+  classic        : Eps= 375, AvgReward=  493.1, WinRate=  0.0%
+  spiral         : Eps= 165, AvgReward=  -50.1, WinRate=  4.0%
+  spiral_harder  : Eps= 278, AvgReward=  -51.8, WinRate=  2.0%
+  empty          : Eps= 282, AvgReward=  -55.4, WinRate=  0.0%
+
+[Multi-task] Episode 1200/2000
+  classic        : Eps= 411, AvgReward=  507.2, WinRate=  0.0%
+  spiral         : Eps= 177, AvgReward=  -50.1, WinRate=  4.0%
+  spiral_harder  : Eps= 298, AvgReward=  -48.4, WinRate=  4.0%
+  empty          : Eps= 314, AvgReward=  -55.2, WinRate=  0.0%
+
+[Multi-task] Episode 1300/2000
+  classic        : Eps= 440, AvgReward=  445.9, WinRate=  0.0%
+  spiral         : Eps= 191, AvgReward=  -49.2, WinRate=  4.0%
+  spiral_harder  : Eps= 331, AvgReward=  -39.8, WinRate= 10.0%
+  empty          : Eps= 338, AvgReward=  -55.2, WinRate=  0.0%
+
+[Multi-task] Episode 1400/2000
+  classic        : Eps= 469, AvgReward=  429.9, WinRate=  0.0%
+  spiral         : Eps= 208, AvgReward=  -49.7, WinRate=  4.0%
+  spiral_harder  : Eps= 357, AvgReward=  -49.3, WinRate=  2.0%
+  empty          : Eps= 366, AvgReward=  -55.3, WinRate=  0.0%
+
+[Multi-task] Episode 1500/2000
+  classic        : Eps= 504, AvgReward=  352.9, WinRate=  0.0%
+  spiral         : Eps= 222, AvgReward=  -47.2, WinRate=  6.0%
+  spiral_harder  : Eps= 382, AvgReward=  -47.5, WinRate=  4.0%
+  empty          : Eps= 392, AvgReward=  -56.0, WinRate=  0.0%
+
+[Multi-task] Episode 1600/2000
+  classic        : Eps= 542, AvgReward=  274.7, WinRate=  0.0%
+  spiral         : Eps= 232, AvgReward=  -46.5, WinRate=  6.0%
+  spiral_harder  : Eps= 409, AvgReward=  -44.1, WinRate=  8.0%
+  empty          : Eps= 417, AvgReward=  -56.1, WinRate=  0.0%
+
+[Multi-task] Episode 1700/2000
+  classic        : Eps= 572, AvgReward=  389.7, WinRate=  0.0%
+  spiral         : Eps= 255, AvgReward=  -40.3, WinRate= 12.0%
+  spiral_harder  : Eps= 435, AvgReward=  -36.3, WinRate= 14.0%
+  empty          : Eps= 438, AvgReward=  -55.7, WinRate=  0.0%
+
+[Multi-task] Episode 1800/2000
+  classic        : Eps= 603, AvgReward=  376.0, WinRate=  0.0%
+  spiral         : Eps= 279, AvgReward=  -40.6, WinRate= 10.0%
+  spiral_harder  : Eps= 457, AvgReward=  -33.4, WinRate= 16.0%
+  empty          : Eps= 461, AvgReward=  -55.4, WinRate=  0.0%
+
+[Multi-task] Episode 1900/2000
+  classic        : Eps= 639, AvgReward=  431.4, WinRate=  0.0%
+  spiral         : Eps= 290, AvgReward=  -42.7, WinRate=  8.0%
+  spiral_harder  : Eps= 485, AvgReward=  -41.4, WinRate= 10.0%
+  empty          : Eps= 486, AvgReward=  -55.0, WinRate=  0.0%
+
+[Multi-task] Episode 2000/2000
+  classic        : Eps= 672, AvgReward=  419.2, WinRate=  0.0%
+  spiral         : Eps= 310, AvgReward=  -47.2, WinRate=  4.0%
+  spiral_harder  : Eps= 511, AvgReward=  -46.8, WinRate=  6.0%
+  empty          : Eps= 507, AvgReward=  -55.0, WinRate=  0.0%
+
+[Multi-task] Training complete! Saved to: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final/pacman_dqn_multitask.pt
+  → Also saved as: pacman_dqn_classic.pt
+  → Also saved as: pacman_dqn_spiral.pt
+  → Also saved as: pacman_dqn_spiral_harder.pt
+  → Also saved as: pacman_dqn_empty.pt
+
+============================================================
+CURRICULUM TRAINING COMPLETE!
+============================================================
+Tue Dec  2 22:32:04 EST 2025
+Job finished.
+PyTorch device: cuda
+Frame stacking: 4 frames
+N-step returns: 3 steps
+
+============================================================
+Training on layout: classic
+Episodes: 4000
+Device: cuda
+Using N-Step: True, PER: True, Augmentation: True
+============================================================
+
+Loading weights from pacman_dqn_spiral_harder.pt
+[classic] Ep   50 | Reward:   325.4 | Avg(50):   161.0 | WinRate:   0.0% | Steps:  204 | ε: 0.588 | LR: 5.00e-04
+[classic] Ep  100 | Reward:   257.7 | Avg(50):   217.8 | WinRate:   0.0% | Steps:   51 | ε: 0.387 | LR: 4.99e-04
+[classic] Ep  150 | Reward:   350.1 | Avg(50):   285.9 | WinRate:   0.0% | Steps:  199 | ε: 0.270 | LR: 4.98e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  200 | Reward:   761.2 | Avg(50):   278.4 | WinRate:   0.0% | Steps:  471 | ε: 0.210 | LR: 4.97e-04
+[classic] Ep  250 | Reward:   583.3 | Avg(50):   344.3 | WinRate:   0.0% | Steps:  132 | ε: 0.164 | LR: 4.95e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  300 | Reward:    36.0 | Avg(50):   392.3 | WinRate:   0.0% | Steps:   14 | ε: 0.122 | LR: 4.93e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  350 | Reward:   668.0 | Avg(50):   475.8 | WinRate:   0.0% | Steps:  135 | ε: 0.094 | LR: 4.91e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  400 | Reward:   202.6 | Avg(50):   433.3 | WinRate:   0.0% | Steps:   33 | ε: 0.081 | LR: 4.88e-04
+[classic] Ep  450 | Reward:   629.7 | Avg(50):   425.4 | WinRate:   0.0% | Steps:  156 | ε: 0.072 | LR: 4.85e-04
+[classic] Ep  500 | Reward:   908.3 | Avg(50):   498.6 | WinRate:   0.0% | Steps:  896 | ε: 0.064 | LR: 4.81e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+  → Checkpoint saved: pacman_dqn_classic_ep500.pt
+[classic] Ep  550 | Reward:   814.2 | Avg(50):   549.7 | WinRate:   0.0% | Steps:  147 | ε: 0.058 | LR: 4.77e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  600 | Reward:   567.6 | Avg(50):   484.0 | WinRate:   0.0% | Steps:   62 | ε: 0.056 | LR: 4.73e-04
+[classic] Ep  650 | Reward:   608.1 | Avg(50):   481.4 | WinRate:   0.0% | Steps:   71 | ε: 0.054 | LR: 4.69e-04
+[classic] Ep  700 | Reward:   351.2 | Avg(50):   584.9 | WinRate:   0.0% | Steps:   46 | ε: 0.053 | LR: 4.64e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  750 | Reward:   724.0 | Avg(50):   604.7 | WinRate:   0.0% | Steps:   83 | ε: 0.052 | LR: 4.59e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep  800 | Reward:   816.8 | Avg(50):   555.2 | WinRate:   0.0% | Steps:  127 | ε: 0.051 | LR: 4.53e-04
+[classic] Ep  850 | Reward:   687.4 | Avg(50):   561.8 | WinRate:   0.0% | Steps:   80 | ε: 0.051 | LR: 4.47e-04
+[classic] Ep  900 | Reward:   333.5 | Avg(50):   573.1 | WinRate:   0.0% | Steps:   68 | ε: 0.051 | LR: 4.41e-04
+[classic] Ep  950 | Reward:   211.6 | Avg(50):   562.1 | WinRate:   0.0% | Steps:   29 | ε: 0.050 | LR: 4.35e-04
+[classic] Ep 1000 | Reward:   179.0 | Avg(50):   570.6 | WinRate:   0.0% | Steps:   24 | ε: 0.050 | LR: 4.28e-04
+  → Checkpoint saved: pacman_dqn_classic_ep1000.pt
+[classic] Ep 1050 | Reward:   546.6 | Avg(50):   623.4 | WinRate:   0.0% | Steps:   62 | ε: 0.050 | LR: 4.21e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 1100 | Reward:   601.1 | Avg(50):   694.6 | WinRate:   0.0% | Steps:   90 | ε: 0.050 | LR: 4.14e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 1150 | Reward:   995.6 | Avg(50):   598.5 | WinRate:   0.0% | Steps:  175 | ε: 0.050 | LR: 4.07e-04
+[classic] Ep 1200 | Reward:  1035.3 | Avg(50):   668.6 | WinRate:   0.0% | Steps:  184 | ε: 0.050 | LR: 3.99e-04
+[classic] Ep 1250 | Reward:   826.4 | Avg(50):   656.1 | WinRate:   0.0% | Steps:  272 | ε: 0.050 | LR: 3.91e-04
+[classic] Ep 1300 | Reward:   971.2 | Avg(50):   592.6 | WinRate:   0.0% | Steps:  392 | ε: 0.050 | LR: 3.83e-04
+[classic] Ep 1350 | Reward:   935.1 | Avg(50):   630.9 | WinRate:   0.0% | Steps:  134 | ε: 0.050 | LR: 3.75e-04
+[classic] Ep 1400 | Reward:  1088.3 | Avg(50):   652.2 | WinRate:   0.0% | Steps:  254 | ε: 0.050 | LR: 3.66e-04
+[classic] Ep 1450 | Reward:    47.4 | Avg(50):   576.3 | WinRate:   0.0% | Steps:   11 | ε: 0.050 | LR: 3.58e-04
+[classic] Ep 1500 | Reward:  1082.0 | Avg(50):   594.5 | WinRate:   0.0% | Steps:  189 | ε: 0.050 | LR: 3.49e-04
+  → Checkpoint saved: pacman_dqn_classic_ep1500.pt
+[classic] Ep 1550 | Reward:   545.1 | Avg(50):   669.4 | WinRate:   0.0% | Steps:   64 | ε: 0.050 | LR: 3.40e-04
+[classic] Ep 1600 | Reward:   435.4 | Avg(50):   616.2 | WinRate:   0.0% | Steps:   51 | ε: 0.050 | LR: 3.31e-04
+[classic] Ep 1650 | Reward:  1194.8 | Avg(50):   658.6 | WinRate:   0.0% | Steps:  595 | ε: 0.050 | LR: 3.22e-04
+[classic] Ep 1700 | Reward:   145.5 | Avg(50):   631.3 | WinRate:   0.0% | Steps:   21 | ε: 0.050 | LR: 3.12e-04
+[classic] Ep 1750 | Reward:  1035.3 | Avg(50):   650.2 | WinRate:   0.0% | Steps:  126 | ε: 0.050 | LR: 3.03e-04
+[classic] Ep 1800 | Reward:   374.3 | Avg(50):   597.1 | WinRate:   0.0% | Steps:   45 | ε: 0.050 | LR: 2.93e-04
+[classic] Ep 1850 | Reward:   169.5 | Avg(50):   670.2 | WinRate:   0.0% | Steps:   24 | ε: 0.050 | LR: 2.84e-04
+[classic] Ep 1900 | Reward:   411.3 | Avg(50):   622.6 | WinRate:   0.0% | Steps:   51 | ε: 0.050 | LR: 2.74e-04
+[classic] Ep 1950 | Reward:   862.3 | Avg(50):   767.6 | WinRate:   0.0% | Steps:   97 | ε: 0.050 | LR: 2.65e-04
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 2000 | Reward:   980.3 | Avg(50):   724.9 | WinRate:   0.0% | Steps:  199 | ε: 0.050 | LR: 2.55e-04
+  → Checkpoint saved: pacman_dqn_classic_ep2000.pt
+[classic] Ep 2050 | Reward:   107.2 | Avg(50):   691.2 | WinRate:   0.0% | Steps:   19 | ε: 0.050 | LR: 2.45e-04
+[classic] Ep 2100 | Reward:   206.4 | Avg(50):   648.4 | WinRate:   0.0% | Steps:   27 | ε: 0.050 | LR: 2.36e-04
+[classic] Ep 2150 | Reward:   677.9 | Avg(50):   663.7 | WinRate:   0.0% | Steps:   78 | ε: 0.050 | LR: 2.26e-04
+[classic] Ep 2200 | Reward:   362.9 | Avg(50):   723.4 | WinRate:   0.0% | Steps:   48 | ε: 0.050 | LR: 2.17e-04
+[classic] Ep 2250 | Reward:   510.0 | Avg(50):   579.6 | WinRate:   0.0% | Steps:   81 | ε: 0.050 | LR: 2.07e-04
+[classic] Ep 2300 | Reward:   119.3 | Avg(50):   648.5 | WinRate:   0.0% | Steps:   19 | ε: 0.050 | LR: 1.98e-04
+[classic] Ep 2350 | Reward:    66.7 | Avg(50):   598.1 | WinRate:   0.0% | Steps:   14 | ε: 0.050 | LR: 1.88e-04
+[classic] Ep 2400 | Reward:   858.0 | Avg(50):   721.1 | WinRate:   0.0% | Steps:   98 | ε: 0.050 | LR: 1.79e-04
+[classic] Ep 2450 | Reward:   449.1 | Avg(50):   650.9 | WinRate:   0.0% | Steps:   54 | ε: 0.050 | LR: 1.70e-04
+[classic] Ep 2500 | Reward:  1069.7 | Avg(50):   717.3 | WinRate:   0.0% | Steps:  125 | ε: 0.050 | LR: 1.61e-04
+  → Checkpoint saved: pacman_dqn_classic_ep2500.pt
+[classic] Ep 2550 | Reward:   333.3 | Avg(50):   709.9 | WinRate:   0.0% | Steps:   39 | ε: 0.050 | LR: 1.52e-04
+[classic] Ep 2600 | Reward:   481.1 | Avg(50):   729.8 | WinRate:   0.0% | Steps:   60 | ε: 0.050 | LR: 1.44e-04
+[classic] Ep 2650 | Reward:   407.1 | Avg(50):   759.1 | WinRate:   0.0% | Steps:   49 | ε: 0.050 | LR: 1.35e-04
+[classic] Ep 2700 | Reward:   871.9 | Avg(50):   702.1 | WinRate:   0.0% | Steps:   95 | ε: 0.050 | LR: 1.27e-04
+[classic] Ep 2750 | Reward:  1043.6 | Avg(50):   607.9 | WinRate:   0.0% | Steps:  145 | ε: 0.050 | LR: 1.19e-04
+[classic] Ep 2800 | Reward:   987.5 | Avg(50):   733.3 | WinRate:   0.0% | Steps:  111 | ε: 0.050 | LR: 1.11e-04
+[classic] Ep 2850 | Reward:   481.7 | Avg(50):   684.1 | WinRate:   0.0% | Steps:   58 | ε: 0.050 | LR: 1.03e-04
+[classic] Ep 2900 | Reward:   833.4 | Avg(50):   719.5 | WinRate:   0.0% | Steps:   92 | ε: 0.050 | LR: 9.59e-05
+[classic] Ep 2950 | Reward:   327.2 | Avg(50):   687.3 | WinRate:   0.0% | Steps:   52 | ε: 0.050 | LR: 8.87e-05
+[classic] Ep 3000 | Reward:   201.1 | Avg(50):   656.2 | WinRate:   0.0% | Steps:   28 | ε: 0.050 | LR: 8.18e-05
+  → Checkpoint saved: pacman_dqn_classic_ep3000.pt
+[classic] Ep 3050 | Reward:    88.5 | Avg(50):   712.1 | WinRate:   0.0% | Steps:   15 | ε: 0.050 | LR: 7.51e-05
+[classic] Ep 3100 | Reward:   881.6 | Avg(50):   726.9 | WinRate:   0.0% | Steps:  106 | ε: 0.050 | LR: 6.87e-05
+[classic] Ep 3150 | Reward:   907.5 | Avg(50):   751.2 | WinRate:   0.0% | Steps:  101 | ε: 0.050 | LR: 6.26e-05
+[classic] Ep 3200 | Reward:   508.4 | Avg(50):   818.9 | WinRate:   0.0% | Steps:   63 | ε: 0.050 | LR: 5.68e-05
+  → New best model saved: pacman_dqn_classic_best.pt
+[classic] Ep 3250 | Reward:  1132.3 | Avg(50):   803.2 | WinRate:   0.0% | Steps:  140 | ε: 0.050 | LR: 5.13e-05
+[classic] Ep 3300 | Reward:  1193.9 | Avg(50):   683.3 | WinRate:   0.0% | Steps:  198 | ε: 0.050 | LR: 4.61e-05
+[classic] Ep 3350 | Reward:  1259.8 | Avg(50):   739.3 | WinRate:   0.0% | Steps:  193 | ε: 0.050 | LR: 4.12e-05
+[classic] Ep 3400 | Reward:  1179.9 | Avg(50):   801.6 | WinRate:   0.0% | Steps:  354 | ε: 0.050 | LR: 3.67e-05
+[classic] Ep 3450 | Reward:   526.5 | Avg(50):   721.9 | WinRate:   0.0% | Steps:   65 | ε: 0.050 | LR: 3.25e-05
+[classic] Ep 3500 | Reward:  1208.2 | Avg(50):   692.4 | WinRate:   0.0% | Steps:  248 | ε: 0.050 | LR: 2.86e-05
+  → Checkpoint saved: pacman_dqn_classic_ep3500.pt
+[classic] Ep 3550 | Reward:  1217.1 | Avg(50):   620.7 | WinRate:   0.0% | Steps:  280 | ε: 0.050 | LR: 2.51e-05
+[classic] Ep 3600 | Reward:  1010.4 | Avg(50):   711.4 | WinRate:   0.0% | Steps:  148 | ε: 0.050 | LR: 2.20e-05
+[classic] Ep 3650 | Reward:  1050.0 | Avg(50):   662.2 | WinRate:   0.0% | Steps:  117 | ε: 0.050 | LR: 1.92e-05
+[classic] Ep 3700 | Reward:  1122.0 | Avg(50):   784.3 | WinRate:   0.0% | Steps:  148 | ε: 0.050 | LR: 1.68e-05
+[classic] Ep 3750 | Reward:  1288.8 | Avg(50):   776.7 | WinRate:   0.0% | Steps:  420 | ε: 0.050 | LR: 1.47e-05
+[classic] Ep 3800 | Reward:   814.0 | Avg(50):   700.1 | WinRate:   0.0% | Steps:   95 | ε: 0.050 | LR: 1.30e-05
+[classic] Ep 3850 | Reward:   230.8 | Avg(50):   651.9 | WinRate:   0.0% | Steps:   33 | ε: 0.050 | LR: 1.17e-05
+[classic] Ep 3900 | Reward:   322.2 | Avg(50):   706.0 | WinRate:   0.0% | Steps:   40 | ε: 0.050 | LR: 1.08e-05
+[classic] Ep 3950 | Reward:   430.0 | Avg(50):   789.7 | WinRate:   0.0% | Steps:   51 | ε: 0.050 | LR: 1.02e-05
+[classic] Ep 4000 | Reward:    57.6 | Avg(50):   642.4 | WinRate:   0.0% | Steps:   12 | ε: 0.050 | LR: 1.00e-05
+  → Checkpoint saved: pacman_dqn_classic_ep4000.pt
+
+[classic] Training complete!
+  Final win rate (last 100): 0.0%
+  Saved to: /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final/pacman_dqn_classic.pt
+Finished: Wed Dec  3 02:33:23 EST 2025
+-rw-r--r-- 1 seansal2 ds542ta 1256133 Dec  3 02:33 pacman_dqn_classic.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256447 Dec  3 01:40 pacman_dqn_classic_best.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256447 Dec  2 20:20 pacman_dqn_classic_best_old.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256547 Dec  2 23:23 pacman_dqn_classic_ep1000.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256547 Dec  2 23:55 pacman_dqn_classic_ep1500.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256547 Dec  3 00:25 pacman_dqn_classic_ep2000.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256547 Dec  3 00:54 pacman_dqn_classic_ep2500.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256547 Dec  3 01:27 pacman_dqn_classic_ep3000.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256547 Dec  3 02:00 pacman_dqn_classic_ep3500.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256547 Dec  3 02:33 pacman_dqn_classic_ep4000.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256547 Dec  2 21:35 pacman_dqn_classic_ep4000_old.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256497 Dec  2 22:54 pacman_dqn_classic_ep500.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256033 Dec  2 22:32 pacman_dqn_empty.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256233 Dec  2 22:32 pacman_dqn_multitask.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256083 Dec  2 22:32 pacman_dqn_spiral.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256397 Dec  2 16:42 pacman_dqn_spiral_best.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256497 Dec  2 22:32 pacman_dqn_spiral_harder.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256747 Dec  2 22:22 pacman_dqn_spiral_harder_best.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256847 Dec  2 22:22 pacman_dqn_spiral_harder_ep1000.pt
+-rw-r--r-- 1 seansal2 ds542ta 1256797 Dec  2 22:21 pacman_dqn_spiral_harder_ep500.pt

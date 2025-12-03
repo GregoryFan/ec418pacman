@@ -1,0 +1,27 @@
+#!/bin/bash -l
+#$ -P ds542
+#$ -l h_rt=12:00:00
+#$ -pe omp 4
+#$ -l gpus=1
+#$ -l gpu_c=7.0
+#$ -l gpu_memory=32G
+#$ -m bea
+#$ -N sean-pacman
+#$ -cwd
+#$ -j y
+#$ -o sean-pacman.txt
+
+echo "Host: $(hostname)"
+echo "Directory: $(pwd)"
+date
+
+module load miniconda
+conda activate ec418-pacman
+
+cd /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change5
+
+python train.py 
+
+date
+echo "Job finished."
+

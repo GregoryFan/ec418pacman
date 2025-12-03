@@ -1,0 +1,32 @@
+#!/bin/bash -l
+#$ -P ds542
+#$ -l h_rt=12:00:00
+#$ -pe omp 4
+#$ -l gpus=1
+#$ -l gpu_c=7.0
+#$ -l gpu_memory=32G
+#$ -m bea
+#$ -N sean-pacman
+#$ -cwd
+#$ -j y
+#$ -o sean-pacman-training.txt
+
+echo "Host: $(hostname)"
+echo "Directory: $(pwd)"
+echo "Starting training: $(date)"
+module load miniconda
+conda activate ec418-pacman
+
+cd /projectnb/ds542/students/seansal2/FinalProject/ec418pacman/change-final
+
+# Phase 1: Pre-train on spiral_harder
+echo "Phase 1: spiral_harder"
+python train.py --mode single --layout spiral_harder --episodes 1000
+
+# Phase 2: Fine-tune on classic
+echo "Phase 2: classic (with transfer)"
+python train.py --mode single --layout classic --episodes 4000 --weights pacman_dqn_spiral_harder.pt
+
+echo "Finished: $(date)"
+ls -la *.pt
+
